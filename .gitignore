@@ -396,3 +396,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Custom
+/Publish/
+/Log/
+/Storage/
+desktop.ini
+__*
