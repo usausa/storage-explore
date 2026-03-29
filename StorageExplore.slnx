@@ -3,14 +3,14 @@
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
+    <File Path="AGENTS.md" />
     <File Path="Analyzers.ruleset" />
-    <File Path="CloudConsole.sln.DotSettings" />
-    <File Path="Database.Sample.sql" />
-    <File Path="Database.sql" />
+    <File Path="CLAUDE.md" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Build.targets" />
     <File Path="LICENSE" />
-    <File Path="NuGet.Config" />
     <File Path="README.md" />
+    <File Path="StorageExplore.sln.DotSettings" />
   </Folder>
+  <Project Path="StorageExplore/StorageExplore.csproj" Id="08a59d5f-b06d-48a5-a75e-bcd0c56e9d5f" />
 </Solution>
