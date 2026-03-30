@@ -1,0 +1,73 @@
+<div class="fp-backdrop" @onclick="OnClose"></div>
+<div class="fp-panel" @onclick:stopPropagation>
+    <div class="fp-header">
+        <div class="fp-header-info">
+            <i class="bi @Item.IconCss"></i>
+            <span class="fp-filename">@Item.Name</span>
+            <span class="fp-filesize">@Item.FormattedSize</span>
+        </div>
+        <div class="fp-header-actions">
+            <a class="btn-se-icon" href="@DownloadUrl" target="_blank" title="Download">
+                <i class="bi bi-download"></i>
+            </a>
+            <button class="btn-se-icon" @onclick="OnClose" title="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+    <div class="fp-body">
+        @if (IsImage)
+        {
+            <div class="fp-center">
+                <img src="@PreviewUrl" alt="@Item.Name" class="fp-image" />
+            </div>
+        }
+        else if (IsVideo)
+        {
+            <div class="fp-center">
+                <video controls class="fp-video" autoplay>
+                    <source src="@PreviewUrl" type="@Item.ContentType" />
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        }
+        else if (IsAudio)
+        {
+            <div class="fp-center fp-audio-wrap">
+                <div class="fp-audio-icon">
+                    <i class="bi bi-music-note-beamed"></i>
+                </div>
+                <div class="fp-audio-name">@Item.Name</div>
+                <audio controls class="fp-audio" autoplay>
+                    <source src="@PreviewUrl" type="@Item.ContentType" />
+                    Your browser does not support the audio tag.
+                </audio>
+            </div>
+        }
+        else if (IsPdf)
+        {
+            <iframe src="@PreviewUrl" class="fp-pdf"></iframe>
+        }
+        else if (IsText)
+        {
+            <div class="fp-text-wrap">
+                @if (textContent is null)
+                {
+                    <div class="fp-center">
+                        <div class="spinner-se spinner-se-lg" role="status"></div>
+                    </div>
+                }
+                else if (textContent == "")
+                {
+                    <div class="fp-center">
+                        <p style="color: var(--se-text-muted);">File is empty or too large to preview.</p>
+                    </div>
+                }
+                else
+                {
+                    <pre class="fp-text-content">@textContent</pre>
+                }
+            </div>
+        }
+    </div>
+</div>

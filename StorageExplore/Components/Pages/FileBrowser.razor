@@ -1,0 +1,290 @@
+@page "/"
+@page "/browse/{**Path}"
+
+<PageTitle>StorageExplore - @(string.IsNullOrEmpty(Path) ? "All files" : System.IO.Path.GetFileName(Path))</PageTitle>
+
+<div class="fb" @ref="dropZoneRef">
+    <input type="file" multiple @ref="fileInputRef" style="display:none" />
+
+    <!-- Action bar -->
+    <div class="fb-actions">
+        <div class="fb-actions-left">
+            <!-- Breadcrumb -->
+            <nav class="fb-breadcrumb">
+                <a class="fb-crumb" href="/" @onclick:preventDefault @onclick="() => NavigateTo(string.Empty)">
+                    <i class="bi bi-house-door"></i>
+                    <span>@Bucket</span>
+                </a>
+                @foreach (var crumb in GetBreadcrumbs())
+                {
+                    <i class="bi bi-chevron-right fb-crumb-sep"></i>
+                    @if (crumb.IsLast)
+                    {
+                        <span class="fb-crumb current">@crumb.Name</span>
+                    }
+                    else
+                    {
+                        <a class="fb-crumb" href="@crumb.Url" @onclick:preventDefault @onclick="() => NavigateTo(crumb.Path)">@crumb.Name</a>
+                    }
+                }
+            </nav>
+        </div>
+
+        <div class="fb-actions-right">
+            <button class="btn-se-primary" @onclick="ShowUploadDialog">
+                <i class="bi bi-cloud-arrow-up"></i> Upload
+            </button>
+            <button class="btn-se-ghost" @onclick="ShowNewFolderDialog">
+                <i class="bi bi-folder-plus"></i> New folder
+            </button>
+
+            @if (selectedItem is not null)
+            {
+                <a class="btn-se-ghost" href="@GetDownloadUrl(selectedItem)" target="_blank">
+                    <i class="bi bi-download"></i> Download
+                </a>
+                <button class="btn-se-danger" @onclick="DeleteSelected">
+                    <i class="bi bi-trash3"></i> Delete
+                </button>
+            }
+
+            <div class="fb-separator"></div>
+
+            <button class="btn-se-icon @(viewMode == ViewMode.List ? "active" : "")"
+                    @onclick="() => viewMode = ViewMode.List" title="List view">
+                <i class="bi bi-list-ul"></i>
+            </button>
+            <button class="btn-se-icon @(viewMode == ViewMode.Grid ? "active" : "")"
+                    @onclick="() => viewMode = ViewMode.Grid" title="Grid view">
+                <i class="bi bi-grid-3x2-gap"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Upload progress toast -->
+    @if (isUploading)
+    {
+        <div class="fb-upload-toast">
+            <div class="fb-upload-toast-content">
+                <div class="spinner-se" role="status"></div>
+                <span>Uploading @uploadedCount of @uploadTotalCount files...</span>
+            </div>
+            <div class="fb-upload-bar">
+                <div class="fb-upload-bar-fill" style="width: @(uploadTotalCount > 0 ? (int)(100.0 * uploadedCount / uploadTotalCount) : 0)%"></div>
+            </div>
+        </div>
+    }
+
+    @if (uploadError is not null)
+    {
+        <div class="fb-error-toast">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@uploadError</span>
+            <button class="btn-se-icon" @onclick="() => uploadError = null"><i class="bi bi-x"></i></button>
+        </div>
+    }
+
+    <!-- New folder inline -->
+    @if (showNewFolder)
+    {
+        <div class="fb-new-folder">
+            <i class="bi bi-folder-plus" style="color: var(--se-primary); font-size: 1.1rem;"></i>
+            <input type="text" class="fb-new-folder-input" placeholder="Folder name" autofocus
+                   @bind="newFolderName" @onkeydown="OnNewFolderKeyDown" />
+            <button class="btn-se-primary" style="padding: 5px 14px;" @onclick="CreateFolder">Create</button>
+            <button class="btn-se-ghost" style="padding: 5px 12px;" @onclick="() => showNewFolder = false">Cancel</button>
+        </div>
+    }
+
+    <!-- Content area -->
+    <div class="fb-content">
+        @if (isLoading)
+        {
+            <div class="fb-empty">
+                <div class="spinner-se spinner-se-lg" role="status"></div>
+            </div>
+        }
+        else if (items.Count == 0)
+        {
+            <div class="fb-empty">
+                <div class="fb-empty-icon">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                </div>
+                <h3>Drop files here</h3>
+                <p>or use the Upload button to add files</p>
+            </div>
+        }
+        else if (viewMode == ViewMode.List)
+        {
+            <!-- List view -->
+            <div class="fb-list">
+                <div class="fb-list-header">
+                    <div class="fb-col-icon"></div>
+                    <div class="fb-col-name fb-sortable" @onclick="() => SortBy(SortField.Name)">
+                        Name @SortIndicator(SortField.Name)
+                    </div>
+                    <div class="fb-col-size fb-sortable" @onclick="() => SortBy(SortField.Size)">
+                        Size @SortIndicator(SortField.Size)
+                    </div>
+                    <div class="fb-col-modified fb-sortable" @onclick="() => SortBy(SortField.Modified)">
+                        Modified @SortIndicator(SortField.Modified)
+                    </div>
+                    <div class="fb-col-actions"></div>
+                </div>
+                @if (!string.IsNullOrEmpty(Path))
+                {
+                    <div class="fb-list-row fb-row-parent" @onclick="NavigateUp">
+                        <div class="fb-col-icon">
+                            <i class="bi bi-arrow-90deg-up fb-icon-parent"></i>
+                        </div>
+                        <div class="fb-col-name">..</div>
+                        <div class="fb-col-size"></div>
+                        <div class="fb-col-modified"></div>
+                        <div class="fb-col-actions"></div>
+                    </div>
+                }
+                @foreach (var item in GetSortedItems())
+                {
+                    @if (item.IsDirectory)
+                    {
+                        <div class="fb-list-row fb-row-folder"
+                             @onclick="() => NavigateTo(item.RelativePath)">
+                            <div class="fb-col-icon">
+                                <i class="bi bi-folder-fill fb-icon-folder"></i>
+                            </div>
+                            <div class="fb-col-name">@item.Name</div>
+                            <div class="fb-col-size"></div>
+                            <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm")</div>
+                            <div class="fb-col-actions">
+                                <button class="btn-se-icon" title="Delete"
+                                        @onclick="() => DeleteItem(item)" @onclick:stopPropagation>
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="fb-list-row @(selectedItem == item ? "selected" : "")"
+                             @onclick="() => SelectItem(item)"
+                             @ondblclick="() => OpenItem(item)">
+                            <div class="fb-col-icon">
+                                @if (IsImageFile(item))
+                                {
+                                    <div class="fb-row-thumb">
+                                        <img src="@GetThumbnailUrl(item)" alt="" loading="lazy" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <i class="bi @item.IconCss"></i>
+                                }
+                            </div>
+                            <div class="fb-col-name">@item.Name</div>
+                            <div class="fb-col-size">@item.FormattedSize</div>
+                            <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm")</div>
+                            <div class="fb-col-actions">
+                                <a class="btn-se-icon" href="@GetDownloadUrl(item)" target="_blank" title="Download"
+                                   @onclick:stopPropagation>
+                                    <i class="bi bi-download"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Grid view -->
+            <div class="fb-grid">
+                @if (!string.IsNullOrEmpty(Path))
+                {
+                    <div class="fb-card fb-card-parent" @onclick="NavigateUp">
+                        <div class="fb-card-preview">
+                            <i class="bi bi-arrow-90deg-up fb-icon-parent-lg"></i>
+                        </div>
+                        <div class="fb-card-info">
+                            <div class="fb-card-name">..</div>
+                            <div class="fb-card-meta">Parent folder</div>
+                        </div>
+                    </div>
+                }
+                @foreach (var item in GetSortedItems())
+                {
+                    @if (item.IsDirectory)
+                    {
+                        <div class="fb-card fb-card-folder"
+                             @onclick="() => NavigateTo(item.RelativePath)">
+                            <div class="fb-card-preview">
+                                <i class="bi bi-folder-fill fb-icon-folder-lg"></i>
+                            </div>
+                            <div class="fb-card-info">
+                                <div class="fb-card-name" title="@item.Name">@item.Name</div>
+                                <div class="fb-card-meta">Folder</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="fb-card @(selectedItem == item ? "selected" : "")"
+                             @onclick="() => SelectItem(item)"
+                             @ondblclick="() => OpenItem(item)">
+                            <div class="fb-card-preview">
+                                @if (IsImageFile(item))
+                                {
+                                    <img src="@GetThumbnailUrl(item)" alt="@item.Name" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <i class="bi @item.IconCss fb-icon-file-lg"></i>
+                                }
+                            </div>
+                            <div class="fb-card-info">
+                                <div class="fb-card-name" title="@item.Name">@item.Name</div>
+                                <div class="fb-card-meta">@item.FormattedSize</div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Drag overlay -->
+    <div class="fb-drop-overlay">
+        <div class="fb-drop-overlay-content">
+            <i class="bi bi-cloud-arrow-up"></i>
+            <span>Drop files to upload</span>
+        </div>
+    </div>
+</div>
+
+<!-- Preview modal -->
+@if (previewItem is not null)
+{
+    <FilePreview Item="previewItem" Bucket="@Bucket" OnClose="ClosePreview" />
+}
+
+<!-- Delete confirmation modal -->
+@if (showDeleteConfirm)
+{
+    <div class="fb-modal-backdrop" @onclick="() => showDeleteConfirm = false"></div>
+    <div class="fb-modal" @onclick:stopPropagation>
+        <div class="fb-modal-header">
+            <span>Delete @(selectedItem?.IsDirectory == true ? "folder" : "file")</span>
+            <button class="btn-se-icon" @onclick="() => showDeleteConfirm = false"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="fb-modal-body">
+            <p>Are you sure you want to delete <strong>@selectedItem?.Name</strong>?</p>
+            @if (selectedItem?.IsDirectory == true)
+            {
+                <p class="fb-modal-warn">All contents inside this folder will be permanently deleted.</p>
+            }
+        </div>
+        <div class="fb-modal-footer">
+            <button class="btn-se-ghost" @onclick="() => showDeleteConfirm = false">Cancel</button>
+            <button class="btn-se-primary" style="background: var(--se-danger);" @onclick="ConfirmDelete">Delete</button>
+        </div>
+    </div>
+}

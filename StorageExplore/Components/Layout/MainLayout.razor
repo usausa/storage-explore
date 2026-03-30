@@ -1,6 +1,49 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-@Body
+<div class="app-shell">
+    <header class="app-header">
+        <div class="header-left">
+            <a class="app-logo" href="">
+                <i class="bi bi-hdd-network-fill"></i>
+                <span>StorageExplore</span>
+            </a>
+            <div class="header-bucket-selector">
+                <label class="bucket-label">
+                    <i class="bi bi-bucket-fill"></i>
+                </label>
+                <select class="bucket-select" value="@CurrentBucket" @onchange="OnBucketChanged">
+                    @foreach (var name in BucketNames)
+                    {
+                        <option value="@name" selected="@(name == CurrentBucket)">@name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="storage-info">
+                <div class="storage-info-text">
+                    <span>@UsedFormatted used</span>
+                    <span class="storage-info-sep">/</span>
+                    <span>@TotalFormatted total</span>
+                </div>
+                <div class="storage-bar">
+                    <div class="storage-bar-fill" style="width: @UsagePercent%"></div>
+                </div>
+            </div>
+            <span class="storage-badge">
+                <i class="bi bi-cloud-check"></i> Connected
+            </span>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <CascadingValue Value="CurrentBucket" Name="Bucket">
+            <CascadingValue Value="OnBucketChangedCallback" Name="OnBucketChanged">
+                @Body
+            </CascadingValue>
+        </CascadingValue>
+    </main>
+</div>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.

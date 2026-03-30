@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(dotnet build:*)",
-      "Bash(findstr \"warning\")"
+      "Bash(findstr \"warning\")",
+      "Bash(curl -sL \"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" -o bootstrap-icons.min.css)",
+      "Bash(curl -sL \"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/fonts/bootstrap-icons.woff2\" -o bootstrap-icons.woff2)",
+      "Bash(curl -sL \"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/fonts/bootstrap-icons.woff\" -o bootstrap-icons.woff)",
+      "Bash(curl -sL \"https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2\" -o inter-400.woff2)",
+      "Bash(curl -sL \"https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fAZ9hiA.woff2\" -o inter-500.woff2)",
+      "Bash(curl -sL \"https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYAZ9hiA.woff2\" -o inter-600.woff2)",
+      "Bash(curl -sL \"https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYAZ9hiA.woff2\" -o inter-700.woff2)"
     ]
   }
 }

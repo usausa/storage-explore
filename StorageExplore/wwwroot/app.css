@@ -1,18 +1,227 @@
+/* ============================================
+   StorageExplore – Global Styles
+   Owncloud / Dropbox-inspired design
+   ============================================ */
+
+/* ---- Inter font (local) ---- */
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('fonts/inter/inter-400.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('fonts/inter/inter-500.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('fonts/inter/inter-600.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('fonts/inter/inter-700.woff2') format('woff2');
+}
+
+/* ---- CSS Variables ---- */
+
+:root {
+    --se-primary: #0066ff;
+    --se-primary-hover: #0052cc;
+    --se-primary-light: #e8f0fe;
+    --se-bg: #f7f8fa;
+    --se-surface: #ffffff;
+    --se-border: #e5e7eb;
+    --se-border-light: #f0f1f3;
+    --se-text: #1a1a2e;
+    --se-text-secondary: #6b7280;
+    --se-text-muted: #9ca3af;
+    --se-danger: #dc2626;
+    --se-danger-light: #fef2f2;
+    --se-success: #059669;
+    --se-row-hover: #f8faff;
+    --se-row-selected: #eef4ff;
+    --se-radius: 8px;
+    --se-radius-lg: 12px;
+    --se-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --se-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --se-shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.12);
+    --se-transition: 150ms ease;
+}
+
+/* ---- Reset & Base ---- */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    color: var(--se-text);
+    background: var(--se-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: var(--se-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--se-primary-hover);
+    text-decoration: none;
+}
+
 h1:focus {
     outline: none;
 }
 
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+/* ---- Utility text colors ---- */
+
+.text-warning { color: #f5a623; }
+.text-success { color: var(--se-success); }
+.text-danger { color: var(--se-danger); }
+.text-primary { color: var(--se-primary); }
+.text-info { color: #3b82f6; }
+.text-secondary { color: var(--se-text-secondary); }
+.text-muted { color: var(--se-text-muted); }
+
+/* ============================================
+   Buttons – Clean, minimal
+   ============================================ */
+
+.btn-se-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+    background: var(--se-primary);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background var(--se-transition);
 }
 
-.invalid {
-    outline: 1px solid #e50000;
+.btn-se-primary:hover {
+    background: var(--se-primary-hover);
+    color: #fff;
 }
 
-.validation-message {
-    color: #e50000;
+.btn-se-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--se-text-secondary);
+    background: transparent;
+    border: 1px solid var(--se-border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--se-transition);
 }
+
+.btn-se-ghost:hover {
+    background: var(--se-bg);
+    color: var(--se-text);
+    border-color: #d1d5db;
+}
+
+.btn-se-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--se-danger);
+    background: transparent;
+    border: 1px solid var(--se-border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--se-transition);
+}
+
+.btn-se-danger:hover {
+    background: var(--se-danger-light);
+    border-color: var(--se-danger);
+}
+
+.btn-se-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    color: var(--se-text-secondary);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--se-transition);
+    font-size: 1rem;
+}
+
+.btn-se-icon:hover {
+    background: var(--se-bg);
+    border-color: var(--se-border);
+    color: var(--se-text);
+}
+
+.btn-se-icon.active {
+    background: var(--se-primary-light);
+    color: var(--se-primary);
+    border-color: transparent;
+}
+
+/* ---- Spinner (no Bootstrap dependency) ---- */
+
+.spinner-se {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--se-border);
+    border-top-color: var(--se-primary);
+    border-radius: 50%;
+    animation: se-spin 0.6s linear infinite;
+}
+
+.spinner-se-lg {
+    width: 2rem;
+    height: 2rem;
+    border-width: 3px;
+}
+
+@keyframes se-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Blazor error boundary
+   ============================================ */
 
 .blazor-error-boundary {
     background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
@@ -20,19 +229,950 @@ h1:focus {
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
+
+/* ============================================
+   Scrollbar styling
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* ============================================
+   Layout – App shell
+   ============================================ */
+
+.app-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--se-bg);
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 24px;
+    background: var(--se-surface);
+    border-bottom: 1px solid var(--se-border);
+    flex-shrink: 0;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.app-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--se-text);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.app-logo i {
+    font-size: 1.3rem;
+    color: var(--se-primary);
+}
+
+.app-logo:hover {
+    text-decoration: none;
+    color: var(--se-text);
+}
+
+/* Bucket selector */
+
+.header-bucket-selector {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bucket-label {
+    color: var(--se-text-muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.bucket-select {
+    padding: 4px 28px 4px 10px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--se-text);
+    background: var(--se-bg);
+    border: 1px solid var(--se-border);
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    transition: border-color var(--se-transition);
+}
+
+.bucket-select:hover {
+    border-color: #d1d5db;
+}
+
+.bucket-select:focus {
+    border-color: var(--se-primary);
+    box-shadow: 0 0 0 2px var(--se-primary-light);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Storage info */
+
+.storage-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 180px;
+}
+
+.storage-info-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--se-text-secondary);
+}
+
+.storage-info-sep {
+    color: var(--se-text-muted);
+}
+
+.storage-bar {
+    height: 4px;
+    background: var(--se-border-light);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.storage-bar-fill {
+    height: 100%;
+    background: var(--se-primary);
+    border-radius: 2px;
+    transition: width 300ms ease;
+}
+
+.storage-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--se-success);
+    background: #ecfdf5;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.app-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Error UI */
+
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+/* ============================================
+   FileBrowser – Cloud storage UI
+   ============================================ */
+
+.fb {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ---- Action bar ---- */
+
+.fb-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 24px;
+    background: var(--se-surface);
+    border-bottom: 1px solid var(--se-border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.fb-actions-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+}
+
+.fb-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.fb-separator {
+    width: 1px;
+    height: 24px;
+    background: var(--se-border);
+    margin: 0 4px;
+}
+
+/* ---- Breadcrumb ---- */
+
+.fb-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.fb-crumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--se-text-secondary);
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all var(--se-transition);
+    text-decoration: none;
+}
+
+a.fb-crumb:hover {
+    background: var(--se-bg);
+    color: var(--se-text);
+    text-decoration: none;
+}
+
+.fb-crumb.current {
+    color: var(--se-text);
+    font-weight: 600;
+}
+
+.fb-crumb-sep {
+    font-size: 0.6rem;
+    color: var(--se-text-muted);
+}
+
+/* ---- Upload toast ---- */
+
+.fb-upload-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--se-surface);
+    border: 1px solid var(--se-border);
+    border-radius: var(--se-radius-lg);
+    box-shadow: var(--se-shadow-lg);
+    padding: 12px 16px;
+    min-width: 300px;
+    z-index: 200;
+}
+
+.fb-upload-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+.fb-upload-bar {
+    height: 3px;
+    background: var(--se-border-light);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.fb-upload-bar-fill {
+    height: 100%;
+    background: var(--se-primary);
+    border-radius: 2px;
+    transition: width 300ms ease;
+}
+
+/* ---- Error toast ---- */
+
+.fb-error-toast {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 24px 0;
+    padding: 8px 12px;
+    background: var(--se-danger-light);
+    color: var(--se-danger);
+    border-radius: var(--se-radius);
+    font-size: 0.85rem;
+}
+
+/* ---- New folder ---- */
+
+.fb-new-folder {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 24px;
+    background: var(--se-primary-light);
+    border-bottom: 1px solid var(--se-border);
+}
+
+.fb-new-folder-input {
+    padding: 6px 12px;
+    border: 1px solid var(--se-border);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    width: 260px;
+    transition: border-color var(--se-transition);
+}
+
+.fb-new-folder-input:focus {
+    border-color: var(--se-primary);
+    box-shadow: 0 0 0 2px var(--se-primary-light);
+}
+
+/* ---- Content ---- */
+
+.fb-content {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--se-surface);
+}
+
+/* ---- Empty state ---- */
+
+.fb-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    text-align: center;
+}
+
+.fb-empty-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--se-bg);
+    margin-bottom: 20px;
+}
+
+.fb-empty-icon i {
+    font-size: 2rem;
+    color: var(--se-text-muted);
+}
+
+.fb-empty h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--se-text);
+    margin: 0 0 4px;
+}
+
+.fb-empty p {
+    font-size: 0.85rem;
+    color: var(--se-text-muted);
+    margin: 0;
+}
+
+/* ---- List view ---- */
+
+.fb-list {
+    width: 100%;
+}
+
+.fb-list-header {
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    height: 40px;
+    border-bottom: 1px solid var(--se-border);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--se-text-muted);
+    user-select: none;
+    position: sticky;
+    top: 0;
+    background: var(--se-surface);
+    z-index: 10;
+}
+
+.fb-sortable {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.fb-sortable:hover {
+    color: var(--se-text-secondary);
+}
+
+.fb-list-row {
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    height: 52px;
+    border-bottom: 1px solid var(--se-border-light);
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--se-transition);
+}
+
+.fb-list-row:hover {
+    background: var(--se-row-hover);
+}
+
+.fb-list-row.selected {
+    background: var(--se-row-selected);
+}
+
+.fb-col-icon {
+    width: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.fb-col-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    padding-right: 16px;
+}
+
+.fb-list-row .fb-col-name {
+    font-weight: 500;
+}
+
+.fb-col-size {
+    width: 100px;
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    color: var(--se-text-secondary);
+}
+
+.fb-col-modified {
+    width: 160px;
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    color: var(--se-text-secondary);
+}
+
+.fb-col-actions {
+    width: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--se-transition);
+}
+
+.fb-list-row:hover .fb-col-actions {
+    opacity: 1;
+}
+
+/* Row thumbnail */
+
+.fb-row-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--se-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fb-row-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Parent row (..) */
+
+.fb-row-parent {
+    color: var(--se-text-secondary);
+}
+
+.fb-row-parent .fb-col-name {
+    font-weight: 400;
+    color: var(--se-text-secondary);
+}
+
+.fb-icon-parent {
+    font-size: 1.1rem;
+    color: var(--se-text-muted);
+}
+
+/* Folder row */
+
+.fb-row-folder .fb-col-name {
+    color: var(--se-text);
+}
+
+.fb-icon-folder {
+    color: #f5a623;
+    font-size: 1.35rem;
+}
+
+/* ---- Grid view ---- */
+
+.fb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px;
+    padding: 20px 24px;
+}
+
+.fb-card {
+    border: 1px solid var(--se-border-light);
+    border-radius: var(--se-radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    transition: all var(--se-transition);
+    background: var(--se-surface);
+}
+
+.fb-card:hover {
+    border-color: var(--se-border);
+    box-shadow: var(--se-shadow);
+}
+
+.fb-card.selected {
+    border-color: var(--se-primary);
+    box-shadow: 0 0 0 1px var(--se-primary);
+}
+
+.fb-card-preview {
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--se-bg);
+    overflow: hidden;
+}
+
+.fb-card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fb-icon-folder-lg {
+    font-size: 3rem;
+    color: #f5a623;
+}
+
+.fb-icon-parent-lg {
+    font-size: 2rem;
+    color: var(--se-text-muted);
+}
+
+.fb-card-parent,
+.fb-card-folder {
+    cursor: pointer;
+}
+
+.fb-card-parent .fb-card-preview {
+    background: var(--se-border-light);
+}
+
+.fb-icon-file-lg {
+    font-size: 2.5rem;
+}
+
+.fb-card-info {
+    padding: 10px 12px;
+}
+
+.fb-card-name {
+    font-size: 0.8rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--se-text);
+}
+
+.fb-card-meta {
+    font-size: 0.7rem;
+    color: var(--se-text-muted);
+    margin-top: 2px;
+}
+
+/* ---- Drop overlay ---- */
+
+.fb-drop-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 102, 255, 0.06);
+    border: 3px dashed var(--se-primary);
+    border-radius: var(--se-radius-lg);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    pointer-events: none;
+}
+
+.fb-drop-overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--se-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.fb-drop-overlay-content i {
+    font-size: 2.5rem;
+}
+
+.drop-zone-active .fb-drop-overlay {
+    display: flex;
+}
+
+/* ---- Modal (delete confirm) ---- */
+
+.fb-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 500;
+}
+
+.fb-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--se-surface);
+    border-radius: var(--se-radius-lg);
+    box-shadow: var(--se-shadow-lg);
+    width: 400px;
+    max-width: 90vw;
+    z-index: 501;
+    overflow: hidden;
+}
+
+.fb-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--se-border-light);
+}
+
+.fb-modal-body {
+    padding: 20px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.fb-modal-body p {
+    margin: 0 0 8px;
+}
+
+.fb-modal-warn {
+    color: var(--se-danger);
+    font-size: 0.8rem;
+}
+
+.fb-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--se-border-light);
+}
+
+/* ============================================
+   FilePreview – Full-screen overlay
+   ============================================ */
+
+.fp-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 600;
+    backdrop-filter: blur(2px);
+}
+
+.fp-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 960px;
+    max-height: 90vh;
+    background: var(--se-surface);
+    border-radius: var(--se-radius-lg);
+    box-shadow: var(--se-shadow-lg);
+    z-index: 601;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.fp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--se-border-light);
+    flex-shrink: 0;
+}
+
+.fp-header-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.fp-filename {
+    font-weight: 600;
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fp-filesize {
+    font-size: 0.8rem;
+    color: var(--se-text-muted);
+    flex-shrink: 0;
+}
+
+.fp-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.fp-body {
+    flex: 1;
+    overflow: auto;
+    min-height: 0;
+}
+
+.fp-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    padding: 20px;
+}
+
+.fp-image {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.fp-video {
+    max-width: 100%;
+    max-height: 75vh;
+    border-radius: 4px;
+}
+
+.fp-audio-wrap {
+    flex-direction: column;
+    gap: 16px;
+    padding: 40px 20px;
+}
+
+.fp-audio-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--se-primary-light), #dbeafe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fp-audio-icon i {
+    font-size: 2rem;
+    color: var(--se-primary);
+}
+
+.fp-audio-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.fp-audio {
+    width: 100%;
+    max-width: 500px;
+}
+
+.fp-pdf {
+    width: 100%;
+    height: 80vh;
+    border: none;
+}
+
+.fp-text-wrap {
+    padding: 0;
+    min-height: 300px;
+}
+
+.fp-text-content {
+    margin: 0;
+    padding: 20px 24px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #fafbfc;
+    color: var(--se-text);
+    min-height: 300px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .app-header {
+        padding: 0 16px;
+        gap: 12px;
     }
 
-.darker-border-checkbox.form-check-input {
-    border-color: #929292;
+    .storage-info {
+        display: none;
+    }
+
+    .fb-actions {
+        padding: 10px 16px;
+    }
+
+    .fb-col-modified {
+        display: none;
+    }
+
+    .fb-col-size {
+        width: 80px;
+    }
+
+    .fb-list-row {
+        padding: 0 16px;
+    }
+
+    .fb-list-header {
+        padding: 0 16px;
+    }
+
+    .fb-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        padding: 16px;
+        gap: 8px;
+    }
+
+    .fp-panel {
+        width: 98vw;
+        max-height: 95vh;
+    }
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-    color: var(--bs-secondary-color);
-    text-align: end;
-}
+@media (max-width: 480px) {
+    .fb-col-size {
+        display: none;
+    }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-    text-align: start;
+    .fb-actions-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .header-bucket-selector {
+        display: none;
+    }
 }
