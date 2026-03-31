@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using StorageExplore.Helpers;
 using StorageExplore.Models;
 using StorageExplore.Services;
 
@@ -30,6 +31,9 @@ public partial class FileBrowser : IAsyncDisposable
     private bool isUploading;
     private int uploadedCount;
     private int uploadTotalCount;
+    private long uploadedBytes;
+    private long uploadTotalBytes;
+    private string uploadCurrentFile = "";
     private string? uploadError;
     private bool showNewFolder;
     private string newFolderName = "";
@@ -55,10 +59,16 @@ public partial class FileBrowser : IAsyncDisposable
     private DotNetObjectReference<FileBrowser>? dotNetRef;
 
     private string previousBucket = "";
+    private bool isInitialized;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (previousBucket != Bucket)
+        if (!isInitialized)
+        {
+            previousBucket = Bucket;
+            isInitialized = true;
+        }
+        else if (previousBucket != Bucket)
         {
             previousBucket = Bucket;
             Path = null;
@@ -111,7 +121,15 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void SelectItem(FileItem item)
     {
-        selectedItem = selectedItem == item ? null : item;
+        if (item.IsPreviewable)
+        {
+            selectedItem = item;
+            previewItem = item;
+        }
+        else
+        {
+            selectedItem = selectedItem == item ? null : item;
+        }
     }
 
     private void OpenItem(FileItem item)
@@ -187,7 +205,6 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void StartRename(FileItem item)
     {
-        CloseContextMenu();
         renamingItem = item;
         renameValue = item.Name;
         renameError = null;
@@ -252,22 +269,25 @@ public partial class FileBrowser : IAsyncDisposable
     private void ContextMenuOpen()
     {
         if (contextMenuItem is null) return;
+        var item = contextMenuItem;
         CloseContextMenu();
 
-        if (contextMenuItem.IsDirectory)
+        if (item.IsDirectory)
         {
-            NavigateTo(contextMenuItem.RelativePath);
+            NavigateTo(item.RelativePath);
         }
         else
         {
-            OpenItem(contextMenuItem);
+            OpenItem(item);
         }
     }
 
     private void ContextMenuRename()
     {
         if (contextMenuItem is null) return;
-        StartRename(contextMenuItem);
+        var item = contextMenuItem;
+        CloseContextMenu();
+        StartRename(item);
     }
 
     private void ContextMenuDelete()
@@ -288,10 +308,7 @@ public partial class FileBrowser : IAsyncDisposable
         return $"/api/files/thumbnail?bucket={Uri.EscapeDataString(Bucket)}&path={Uri.EscapeDataString(item.RelativePath)}";
     }
 
-    private static bool IsImageFile(FileItem item)
-    {
-        return item.Extension is ".jpg" or ".jpeg" or ".png" or ".gif" or ".bmp" or ".webp" or ".svg" or ".ico";
-    }
+    private static bool IsImageFile(FileItem item) => FileHelper.HasThumbnail(item.Extension);
 
     private List<Breadcrumb> GetBreadcrumbs()
     {
@@ -365,20 +382,26 @@ public partial class FileBrowser : IAsyncDisposable
     public string GetCurrentBucket() => Bucket;
 
     [JSInvokable]
-    public void OnUploadStarted(int totalCount)
+    public void OnUploadStarted(int totalCount, long totalBytes)
     {
         isUploading = true;
         uploadedCount = 0;
         uploadTotalCount = totalCount;
+        uploadedBytes = 0;
+        uploadTotalBytes = totalBytes;
+        uploadCurrentFile = "";
         uploadError = null;
         InvokeAsync(StateHasChanged);
     }
 
     [JSInvokable]
-    public void OnUploadProgress(int completed, int total)
+    public void OnUploadByteProgress(int completedFiles, int totalFiles, long completedBytes, long totalBytes, string currentFile)
     {
-        uploadedCount = completed;
-        uploadTotalCount = total;
+        uploadedCount = completedFiles;
+        uploadTotalCount = totalFiles;
+        uploadedBytes = completedBytes;
+        uploadTotalBytes = totalBytes;
+        uploadCurrentFile = currentFile;
         InvokeAsync(StateHasChanged);
     }
 
@@ -386,6 +409,7 @@ public partial class FileBrowser : IAsyncDisposable
     public async Task OnUploadCompleted()
     {
         isUploading = false;
+        uploadCurrentFile = "";
         await LoadItems();
         await InvokeAsync(StateHasChanged);
     }

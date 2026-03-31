@@ -82,35 +82,50 @@ async function collectFiles(entries) {
 }
 
 async function uploadFiles(fileList, dotNetHelper) {
-    const chunkSize = 50 * 1024 * 1024; // 50MB per request
+    const batchThreshold = 50 * 1024 * 1024; // 50MB per batch
     const totalFiles = fileList.length;
+    const totalBytes = fileList.reduce((sum, f) => sum + f.file.size, 0);
     let completedFiles = 0;
+    let completedBytes = 0;
 
-    await dotNetHelper.invokeMethodAsync('OnUploadStarted', totalFiles);
+    await dotNetHelper.invokeMethodAsync('OnUploadStarted', totalFiles, totalBytes);
 
     let batch = [];
     let batchSize = 0;
 
     for (const { file, relativePath } of fileList) {
-        if (file.size > chunkSize) {
+        if (file.size > batchThreshold) {
+            // Flush any pending small-file batch first
             if (batch.length > 0) {
+                const batchBytes = batch.reduce((s, b) => s + b.file.size, 0);
                 await sendBatch(batch, dotNetHelper);
                 completedFiles += batch.length;
-                await dotNetHelper.invokeMethodAsync('OnUploadProgress', completedFiles, totalFiles);
+                completedBytes += batchBytes;
+                await dotNetHelper.invokeMethodAsync('OnUploadByteProgress', completedFiles, totalFiles, completedBytes, totalBytes, '');
                 batch = [];
                 batchSize = 0;
             }
-            await uploadLargeFile(file, relativePath, dotNetHelper);
+            // Upload large file with XHR progress
+            await uploadLargeFile(file, relativePath, dotNetHelper, (loaded) => {
+                dotNetHelper.invokeMethodAsync('OnUploadByteProgress',
+                    completedFiles, totalFiles,
+                    completedBytes + loaded, totalBytes,
+                    file.name
+                );
+            });
             completedFiles++;
-            await dotNetHelper.invokeMethodAsync('OnUploadProgress', completedFiles, totalFiles);
+            completedBytes += file.size;
+            await dotNetHelper.invokeMethodAsync('OnUploadByteProgress', completedFiles, totalFiles, completedBytes, totalBytes, '');
         } else {
             batch.push({ file, relativePath });
             batchSize += file.size;
 
-            if (batchSize >= chunkSize) {
+            if (batchSize >= batchThreshold) {
+                const batchBytes = batch.reduce((s, b) => s + b.file.size, 0);
                 await sendBatch(batch, dotNetHelper);
                 completedFiles += batch.length;
-                await dotNetHelper.invokeMethodAsync('OnUploadProgress', completedFiles, totalFiles);
+                completedBytes += batchBytes;
+                await dotNetHelper.invokeMethodAsync('OnUploadByteProgress', completedFiles, totalFiles, completedBytes, totalBytes, '');
                 batch = [];
                 batchSize = 0;
             }
@@ -118,9 +133,11 @@ async function uploadFiles(fileList, dotNetHelper) {
     }
 
     if (batch.length > 0) {
+        const batchBytes = batch.reduce((s, b) => s + b.file.size, 0);
         await sendBatch(batch, dotNetHelper);
         completedFiles += batch.length;
-        await dotNetHelper.invokeMethodAsync('OnUploadProgress', completedFiles, totalFiles);
+        completedBytes += batchBytes;
+        await dotNetHelper.invokeMethodAsync('OnUploadByteProgress', completedFiles, totalFiles, completedBytes, totalBytes, '');
     }
 
     await dotNetHelper.invokeMethodAsync('OnUploadCompleted');
@@ -162,27 +179,47 @@ async function sendBatch(batch, dotNetHelper) {
     }
 }
 
-async function uploadLargeFile(file, relativePath, dotNetHelper) {
-    const currentPath = await dotNetHelper.invokeMethodAsync('GetCurrentPath');
-    const currentBucket = await dotNetHelper.invokeMethodAsync('GetCurrentBucket');
-    const dirPart = relativePath.includes('/')
-        ? relativePath.substring(0, relativePath.lastIndexOf('/'))
-        : '';
-    const uploadPath = dirPart
-        ? (currentPath ? currentPath + '/' + dirPart : dirPart)
-        : currentPath;
+function uploadLargeFile(file, relativePath, dotNetHelper, onProgress) {
+    return new Promise(async (resolve, reject) => {
+        const currentPath = await dotNetHelper.invokeMethodAsync('GetCurrentPath');
+        const currentBucket = await dotNetHelper.invokeMethodAsync('GetCurrentBucket');
+        const dirPart = relativePath.includes('/')
+            ? relativePath.substring(0, relativePath.lastIndexOf('/'))
+            : '';
+        const uploadPath = dirPart
+            ? (currentPath ? currentPath + '/' + dirPart : dirPart)
+            : currentPath;
 
-    const fd = new FormData();
-    fd.append('files', file, file.name);
-    const encodedBucket = encodeURIComponent(currentBucket);
-    const encodedPath = encodeURIComponent(uploadPath);
-    const response = await fetch(`/api/files/upload?bucket=${encodedBucket}&path=${encodedPath}`, {
-        method: 'POST',
-        body: fd
+        const fd = new FormData();
+        fd.append('files', file, file.name);
+        const encodedBucket = encodeURIComponent(currentBucket);
+        const encodedPath = encodeURIComponent(uploadPath);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `/api/files/upload?bucket=${encodedBucket}&path=${encodedPath}`);
+
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable && onProgress) {
+                onProgress(e.loaded);
+            }
+        });
+
+        xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve();
+            } else {
+                console.error('Large file upload failed:', xhr.statusText);
+                dotNetHelper.invokeMethodAsync('OnUploadError', `Upload failed for ${file.name}: ${xhr.statusText}`);
+                resolve(); // Continue with other files
+            }
+        });
+
+        xhr.addEventListener('error', () => {
+            console.error('Large file upload network error');
+            dotNetHelper.invokeMethodAsync('OnUploadError', `Network error uploading ${file.name}`);
+            resolve();
+        });
+
+        xhr.send(fd);
     });
-    if (!response.ok) {
-        const text = await response.text();
-        console.error('Large file upload failed:', text);
-        await dotNetHelper.invokeMethodAsync('OnUploadError', `Upload failed for ${file.name}: ${response.statusText}`);
-    }
 }

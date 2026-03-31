@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using StorageExplore.Helpers;
 using StorageExplore.Services;
 
 namespace StorageExplore.Components.Layout;
@@ -16,8 +17,8 @@ public partial class MainLayout
     private long TotalBytes { get; set; }
     private long FreeBytes { get; set; }
 
-    private string TotalFormatted => FormatBytes(TotalBytes);
-    private string UsedFormatted => FormatBytes(TotalBytes - FreeBytes);
+    private string TotalFormatted => FileHelper.FormatBytes(TotalBytes);
+    private string UsedFormatted => FileHelper.FormatBytes(TotalBytes - FreeBytes);
     private int UsagePercent => TotalBytes > 0 ? (int)(100.0 * (TotalBytes - FreeBytes) / TotalBytes) : 0;
 
     private EventCallback<string> OnBucketChangedCallback => EventCallback.Factory.Create<string>(this, OnBucketChangedFromChild);
@@ -59,13 +60,4 @@ public partial class MainLayout
         TotalBytes = total;
         FreeBytes = free;
     }
-
-    private static string FormatBytes(long bytes) => bytes switch
-    {
-        < 1024 => $"{bytes} B",
-        < 1024 * 1024 => $"{bytes / 1024.0:F1} KB",
-        < 1024L * 1024 * 1024 => $"{bytes / (1024.0 * 1024):F1} MB",
-        < 1024L * 1024 * 1024 * 1024 => $"{bytes / (1024.0 * 1024 * 1024):F1} GB",
-        _ => $"{bytes / (1024.0 * 1024 * 1024 * 1024):F2} TB"
-    };
 }

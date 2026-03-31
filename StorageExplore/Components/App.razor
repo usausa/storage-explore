@@ -7,7 +7,7 @@
     <base href="/" />
     <ResourcePreloader />
     <link rel="stylesheet" href="@Assets["fonts/bootstrap-icons/bootstrap-icons.min.css"]" />
-    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["css/app.css"]" />
     <link rel="stylesheet" href="@Assets["StorageExplore.styles.css"]" />
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -16,8 +16,21 @@
 
 <body>
     <Routes @rendermode="InteractiveServer" />
-    <ReconnectModal />
+
+    <div id="components-reconnect-modal">
+        <div class="reconnect-content">
+            <div class="reconnect-icon">
+                <i class="bi bi-wifi-off"></i>
+            </div>
+            <div class="reconnect-spinner"></div>
+            <h3 class="reconnect-title">Connection lost</h3>
+            <p class="reconnect-message">Attempting to reconnect to the server...</p>
+            <button onclick="location.reload()">Reload</button>
+        </div>
+    </div>
+
     <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script src="@Assets["js/reconnect.js"]"></script>
 </body>
 
 </html>

@@ -73,10 +73,21 @@
         <div class="fb-upload-toast">
             <div class="fb-upload-toast-content">
                 <div class="spinner-se" role="status"></div>
-                <span>Uploading @uploadedCount of @uploadTotalCount files...</span>
+                <span>Uploading @uploadedCount / @uploadTotalCount files</span>
+            </div>
+            @if (!string.IsNullOrEmpty(uploadCurrentFile))
+            {
+                <div class="fb-upload-current-file" title="@uploadCurrentFile">@uploadCurrentFile</div>
+            }
+            <div class="fb-upload-bytes">
+                @(FileHelper.FormatBytes(uploadedBytes)) / @(FileHelper.FormatBytes(uploadTotalBytes))
+                @if (uploadTotalBytes > 0)
+                {
+                    <span>(@((int)(100.0 * uploadedBytes / uploadTotalBytes))%)</span>
+                }
             </div>
             <div class="fb-upload-bar">
-                <div class="fb-upload-bar-fill" style="width: @(uploadTotalCount > 0 ? (int)(100.0 * uploadedCount / uploadTotalCount) : 0)%"></div>
+                <div class="fb-upload-bar-fill" style="width: @(uploadTotalBytes > 0 ? (int)(100.0 * uploadedBytes / uploadTotalBytes) : 0)%"></div>
             </div>
         </div>
     }
@@ -106,7 +117,7 @@
         <div class="fb-new-folder">
             <i class="bi bi-folder-plus" style="color: var(--se-primary); font-size: 1.1rem;"></i>
             <input type="text" class="fb-new-folder-input" placeholder="Folder name" autofocus
-                   @bind="newFolderName" @onkeydown="OnNewFolderKeyDown" />
+                   @bind="newFolderName" @bind:event="oninput" @onkeydown="OnNewFolderKeyDown" />
             <button class="btn-se-primary" style="padding: 5px 14px;" @onclick="CreateFolder">Create</button>
             <button class="btn-se-ghost" style="padding: 5px 12px;" @onclick="() => showNewFolder = false">Cancel</button>
         </div>
@@ -174,7 +185,7 @@
                                 {
                                     <div class="fb-rename-inline" @onclick:stopPropagation>
                                         <input type="text" class="fb-rename-input" autofocus
-                                               @bind="renameValue" @onkeydown="OnRenameKeyDown" />
+                                               @bind="renameValue" @bind:event="oninput" @onkeydown="OnRenameKeyDown" />
                                         <button class="btn-se-icon fb-rename-btn" title="Confirm" @onclick="ConfirmRename">
                                             <i class="bi bi-check-lg"></i>
                                         </button>
@@ -225,7 +236,7 @@
                                 {
                                     <div class="fb-rename-inline" @onclick:stopPropagation>
                                         <input type="text" class="fb-rename-input" autofocus
-                                               @bind="renameValue" @onkeydown="OnRenameKeyDown" />
+                                               @bind="renameValue" @bind:event="oninput" @onkeydown="OnRenameKeyDown" />
                                         <button class="btn-se-icon fb-rename-btn" title="Confirm" @onclick="ConfirmRename">
                                             <i class="bi bi-check-lg"></i>
                                         </button>
@@ -287,7 +298,7 @@
                                 {
                                     <div class="fb-rename-inline" @onclick:stopPropagation>
                                         <input type="text" class="fb-rename-input fb-rename-input-grid" autofocus
-                                               @bind="renameValue" @onkeydown="OnRenameKeyDown" />
+                                               @bind="renameValue" @bind:event="oninput" @onkeydown="OnRenameKeyDown" />
                                         <button class="btn-se-icon fb-rename-btn" title="Confirm" @onclick="ConfirmRename">
                                             <i class="bi bi-check-lg"></i>
                                         </button>
@@ -325,7 +336,7 @@
                                 {
                                     <div class="fb-rename-inline" @onclick:stopPropagation>
                                         <input type="text" class="fb-rename-input fb-rename-input-grid" autofocus
-                                               @bind="renameValue" @onkeydown="OnRenameKeyDown" />
+                                               @bind="renameValue" @bind:event="oninput" @onkeydown="OnRenameKeyDown" />
                                         <button class="btn-se-icon fb-rename-btn" title="Confirm" @onclick="ConfirmRename">
                                             <i class="bi bi-check-lg"></i>
                                         </button>

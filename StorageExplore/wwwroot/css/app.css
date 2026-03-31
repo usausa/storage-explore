@@ -10,7 +10,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('fonts/inter/inter-400.woff2') format('woff2');
+    src: url('../fonts/inter/inter-400.woff2') format('woff2');
 }
 
 @font-face {
@@ -18,7 +18,7 @@
     font-style: normal;
     font-weight: 500;
     font-display: swap;
-    src: url('fonts/inter/inter-500.woff2') format('woff2');
+    src: url('../fonts/inter/inter-500.woff2') format('woff2');
 }
 
 @font-face {
@@ -26,7 +26,7 @@
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('fonts/inter/inter-600.woff2') format('woff2');
+    src: url('../fonts/inter/inter-600.woff2') format('woff2');
 }
 
 @font-face {
@@ -34,7 +34,7 @@
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url('fonts/inter/inter-700.woff2') format('woff2');
+    src: url('../fonts/inter/inter-700.woff2') format('woff2');
 }
 
 /* ---- CSS Variables ---- */
@@ -536,7 +536,22 @@ a.fb-crumb:hover {
     align-items: center;
     gap: 10px;
     font-size: 0.85rem;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+}
+
+.fb-upload-current-file {
+    font-size: 0.78rem;
+    color: var(--se-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 2px;
+}
+
+.fb-upload-bytes {
+    font-size: 0.75rem;
+    color: var(--se-text-muted);
+    margin-bottom: 6px;
 }
 
 .fb-upload-bar {
@@ -1246,6 +1261,88 @@ a.ctx-item:hover {
     height: 1px;
     background: var(--se-border-light);
     margin: 4px 0;
+}
+
+/* ============================================
+   Reconnect modal (Blazor Server)
+   ============================================ */
+
+#components-reconnect-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+}
+
+#components-reconnect-modal.show {
+    display: flex;
+}
+
+#components-reconnect-modal .reconnect-content {
+    background: var(--se-surface);
+    border-radius: var(--se-radius-lg);
+    box-shadow: var(--se-shadow-lg);
+    padding: 32px 40px;
+    text-align: center;
+    max-width: 380px;
+    width: 90vw;
+}
+
+#components-reconnect-modal .reconnect-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--se-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--se-primary);
+}
+
+#components-reconnect-modal .reconnect-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--se-text);
+}
+
+#components-reconnect-modal .reconnect-message {
+    font-size: 0.85rem;
+    color: var(--se-text-secondary);
+    margin: 0 0 20px;
+}
+
+#components-reconnect-modal .reconnect-spinner {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--se-border);
+    border-top-color: var(--se-primary);
+    border-radius: 50%;
+    animation: se-spin 0.6s linear infinite;
+    margin-bottom: 12px;
+}
+
+#components-reconnect-modal button {
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+    background: var(--se-primary);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background var(--se-transition);
+}
+
+#components-reconnect-modal button:hover {
+    background: var(--se-primary-hover);
 }
 
 /* ============================================
