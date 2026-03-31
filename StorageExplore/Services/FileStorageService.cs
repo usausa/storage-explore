@@ -172,6 +172,57 @@ public sealed class FileStorageService
         }
     }
 
+    /// <summary>
+    /// Renames a file or directory. The newName must be a simple name (no path separators).
+    /// Returns the new relative path on success, or null on failure.
+    /// </summary>
+    public string? Rename(string bucketName, string relativePath, string newName)
+    {
+        if (string.IsNullOrWhiteSpace(newName) || newName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) >= 0)
+        {
+            logger.LogWarning("Invalid rename target name: {NewName}", newName);
+            return null;
+        }
+
+        var fullPath = ResolvePath(bucketName, relativePath);
+        if (fullPath is null)
+            return null;
+
+        var parentDir = System.IO.Path.GetDirectoryName(fullPath)!;
+        var newFullPath = System.IO.Path.Combine(parentDir, newName);
+
+        // Ensure the new path stays within the bucket
+        var bucketPath = GetBucketPath(bucketName)!;
+        if (!newFullPath.StartsWith(bucketPath, StringComparison.OrdinalIgnoreCase))
+        {
+            logger.LogWarning("Rename path traversal attempt: {Bucket}/{Path} -> {NewName}", bucketName, relativePath, newName);
+            return null;
+        }
+
+        if (File.Exists(newFullPath) || Directory.Exists(newFullPath))
+        {
+            logger.LogWarning("Rename target already exists: {Path}", newFullPath);
+            return null;
+        }
+
+        if (File.Exists(fullPath))
+        {
+            File.Move(fullPath, newFullPath);
+            logger.LogInformation("Renamed file: {Bucket}/{OldPath} -> {NewName}", bucketName, relativePath, newName);
+        }
+        else if (Directory.Exists(fullPath))
+        {
+            Directory.Move(fullPath, newFullPath);
+            logger.LogInformation("Renamed directory: {Bucket}/{OldPath} -> {NewName}", bucketName, relativePath, newName);
+        }
+        else
+        {
+            return null;
+        }
+
+        return System.IO.Path.GetRelativePath(bucketPath, newFullPath).Replace('\\', '/');
+    }
+
     public bool Exists(string bucketName, string relativePath)
     {
         var fullPath = ResolvePath(bucketName, relativePath);

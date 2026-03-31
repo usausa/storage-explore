@@ -38,6 +38,17 @@ public partial class FileBrowser : IAsyncDisposable
     private SortField sortField = SortField.Name;
     private bool sortDescending;
 
+    // Rename state
+    private FileItem? renamingItem;
+    private string renameValue = "";
+    private string? renameError;
+
+    // Context menu state
+    private bool showContextMenu;
+    private double contextMenuX;
+    private double contextMenuY;
+    private FileItem? contextMenuItem;
+
     private ElementReference dropZoneRef;
     private ElementReference fileInputRef;
     private IJSObjectReference? jsModule;
@@ -170,6 +181,101 @@ public partial class FileBrowser : IAsyncDisposable
         showDeleteConfirm = false;
         selectedItem = null;
         await LoadItems();
+    }
+
+    // ---- Rename ----
+
+    private void StartRename(FileItem item)
+    {
+        CloseContextMenu();
+        renamingItem = item;
+        renameValue = item.Name;
+        renameError = null;
+    }
+
+    private async Task ConfirmRename()
+    {
+        if (renamingItem is null || string.IsNullOrWhiteSpace(renameValue))
+            return;
+
+        if (renameValue == renamingItem.Name)
+        {
+            CancelRename();
+            return;
+        }
+
+        var newPath = Storage.Rename(Bucket, renamingItem.RelativePath, renameValue.Trim());
+        if (newPath is null)
+        {
+            renameError = "Rename failed. Name may already exist or contain invalid characters.";
+            return;
+        }
+
+        renamingItem = null;
+        renameValue = "";
+        renameError = null;
+        await LoadItems();
+    }
+
+    private void CancelRename()
+    {
+        renamingItem = null;
+        renameValue = "";
+        renameError = null;
+    }
+
+    private async Task OnRenameKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await ConfirmRename();
+        else if (e.Key == "Escape")
+            CancelRename();
+    }
+
+    // ---- Context menu ----
+
+    private void OnContextMenu(MouseEventArgs e, FileItem item)
+    {
+        contextMenuItem = item;
+        selectedItem = item;
+        contextMenuX = e.ClientX;
+        contextMenuY = e.ClientY;
+        showContextMenu = true;
+    }
+
+    private void CloseContextMenu()
+    {
+        showContextMenu = false;
+        contextMenuItem = null;
+    }
+
+    private void ContextMenuOpen()
+    {
+        if (contextMenuItem is null) return;
+        CloseContextMenu();
+
+        if (contextMenuItem.IsDirectory)
+        {
+            NavigateTo(contextMenuItem.RelativePath);
+        }
+        else
+        {
+            OpenItem(contextMenuItem);
+        }
+    }
+
+    private void ContextMenuRename()
+    {
+        if (contextMenuItem is null) return;
+        StartRename(contextMenuItem);
+    }
+
+    private void ContextMenuDelete()
+    {
+        if (contextMenuItem is null) return;
+        selectedItem = contextMenuItem;
+        CloseContextMenu();
+        showDeleteConfirm = true;
     }
 
     private string GetDownloadUrl(FileItem item)

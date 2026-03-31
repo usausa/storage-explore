@@ -100,6 +100,24 @@ public class FilesController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("rename")]
+    public IActionResult Rename([FromQuery] string bucket, [FromQuery] string path, [FromQuery] string newName)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return BadRequest("Path is required.");
+        if (string.IsNullOrWhiteSpace(newName))
+            return BadRequest("New name is required.");
+
+        if (!storage.Exists(bucket, path))
+            return NotFound();
+
+        var newPath = storage.Rename(bucket, path, newName);
+        if (newPath is null)
+            return Conflict("Rename failed. The target name may already exist or be invalid.");
+
+        return Ok(new { newPath });
+    }
+
     [HttpDelete]
     public IActionResult Delete([FromQuery] string bucket, [FromQuery] string path)
     {

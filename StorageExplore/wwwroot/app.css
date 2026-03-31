@@ -1117,6 +1117,138 @@ a.fb-crumb:hover {
 }
 
 /* ============================================
+   Inline rename
+   ============================================ */
+
+.fb-rename-inline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
+
+.fb-rename-input {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    font-weight: 500;
+    color: var(--se-text);
+    border: 1px solid var(--se-primary);
+    border-radius: 4px;
+    outline: none;
+    background: var(--se-surface);
+    box-shadow: 0 0 0 2px var(--se-primary-light);
+}
+
+.fb-rename-input-grid {
+    width: 100%;
+}
+
+.fb-rename-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   Context menu
+   ============================================ */
+
+.ctx-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+}
+
+.ctx-menu {
+    position: fixed;
+    z-index: 401;
+    min-width: 200px;
+    background: var(--se-surface);
+    border: 1px solid var(--se-border);
+    border-radius: var(--se-radius);
+    box-shadow: var(--se-shadow-lg);
+    padding: 4px 0;
+    animation: ctx-fade-in 100ms ease;
+}
+
+@keyframes ctx-fade-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.ctx-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--se-text);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background var(--se-transition);
+    text-decoration: none;
+}
+
+a.ctx-item {
+    color: var(--se-text);
+}
+
+a.ctx-item:hover {
+    color: var(--se-text);
+    text-decoration: none;
+}
+
+.ctx-item:hover {
+    background: var(--se-row-hover);
+}
+
+.ctx-item i {
+    font-size: 1rem;
+    color: var(--se-text-secondary);
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.ctx-item span:first-of-type {
+    flex: 1;
+    text-align: left;
+}
+
+.ctx-shortcut {
+    font-size: 0.72rem;
+    color: var(--se-text-muted);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.ctx-item-danger {
+    color: var(--se-danger);
+}
+
+.ctx-item-danger i {
+    color: var(--se-danger);
+}
+
+.ctx-item-danger:hover {
+    background: var(--se-danger-light);
+}
+
+.ctx-divider {
+    height: 1px;
+    background: var(--se-border-light);
+    margin: 4px 0;
+}
+
+/* ============================================
    Responsive
    ============================================ */
 

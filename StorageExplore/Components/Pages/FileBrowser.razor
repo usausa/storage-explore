@@ -3,7 +3,7 @@
 
 <PageTitle>StorageExplore - @(string.IsNullOrEmpty(Path) ? "All files" : System.IO.Path.GetFileName(Path))</PageTitle>
 
-<div class="fb" @ref="dropZoneRef">
+<div class="fb" @ref="dropZoneRef" @onclick="CloseContextMenu">
     <input type="file" multiple @ref="fileInputRef" style="display:none" />
 
     <!-- Action bar -->
@@ -38,11 +38,17 @@
                 <i class="bi bi-folder-plus"></i> New folder
             </button>
 
-            @if (selectedItem is not null)
+            @if (selectedItem is not null && renamingItem is null)
             {
-                <a class="btn-se-ghost" href="@GetDownloadUrl(selectedItem)" target="_blank">
-                    <i class="bi bi-download"></i> Download
-                </a>
+                <button class="btn-se-ghost" @onclick="() => StartRename(selectedItem)">
+                    <i class="bi bi-pencil"></i> Rename
+                </button>
+                @if (!selectedItem.IsDirectory)
+                {
+                    <a class="btn-se-ghost" href="@GetDownloadUrl(selectedItem)" target="_blank">
+                        <i class="bi bi-download"></i> Download
+                    </a>
+                }
                 <button class="btn-se-danger" @onclick="DeleteSelected">
                     <i class="bi bi-trash3"></i> Delete
                 </button>
@@ -81,6 +87,16 @@
             <i class="bi bi-exclamation-circle"></i>
             <span>@uploadError</span>
             <button class="btn-se-icon" @onclick="() => uploadError = null"><i class="bi bi-x"></i></button>
+        </div>
+    }
+
+    <!-- Rename error toast -->
+    @if (renameError is not null)
+    {
+        <div class="fb-error-toast">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@renameError</span>
+            <button class="btn-se-icon" @onclick="() => renameError = null"><i class="bi bi-x"></i></button>
         </div>
     }
 
@@ -147,15 +163,38 @@
                 {
                     @if (item.IsDirectory)
                     {
-                        <div class="fb-list-row fb-row-folder"
-                             @onclick="() => NavigateTo(item.RelativePath)">
+                        <div class="fb-list-row fb-row-folder @(selectedItem == item ? "selected" : "")"
+                             @onclick="() => { if (renamingItem != item) NavigateTo(item.RelativePath); }"
+                             @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-col-icon">
                                 <i class="bi bi-folder-fill fb-icon-folder"></i>
                             </div>
-                            <div class="fb-col-name">@item.Name</div>
+                            <div class="fb-col-name">
+                                @if (renamingItem == item)
+                                {
+                                    <div class="fb-rename-inline" @onclick:stopPropagation>
+                                        <input type="text" class="fb-rename-input" autofocus
+                                               @bind="renameValue" @onkeydown="OnRenameKeyDown" />
+                                        <button class="btn-se-icon fb-rename-btn" title="Confirm" @onclick="ConfirmRename">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <button class="btn-se-icon fb-rename-btn" title="Cancel" @onclick="CancelRename">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @item.Name
+                                }
+                            </div>
                             <div class="fb-col-size"></div>
                             <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm")</div>
                             <div class="fb-col-actions">
+                                <button class="btn-se-icon" title="Rename"
+                                        @onclick="() => StartRename(item)" @onclick:stopPropagation>
+                                    <i class="bi bi-pencil"></i>
+                                </button>
                                 <button class="btn-se-icon" title="Delete"
                                         @onclick="() => DeleteItem(item)" @onclick:stopPropagation>
                                     <i class="bi bi-trash3"></i>
@@ -167,7 +206,8 @@
                     {
                         <div class="fb-list-row @(selectedItem == item ? "selected" : "")"
                              @onclick="() => SelectItem(item)"
-                             @ondblclick="() => OpenItem(item)">
+                             @ondblclick="() => OpenItem(item)"
+                             @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-col-icon">
                                 @if (IsImageFile(item))
                                 {
@@ -180,10 +220,32 @@
                                     <i class="bi @item.IconCss"></i>
                                 }
                             </div>
-                            <div class="fb-col-name">@item.Name</div>
+                            <div class="fb-col-name">
+                                @if (renamingItem == item)
+                                {
+                                    <div class="fb-rename-inline" @onclick:stopPropagation>
+                                        <input type="text" class="fb-rename-input" autofocus
+                                               @bind="renameValue" @onkeydown="OnRenameKeyDown" />
+                                        <button class="btn-se-icon fb-rename-btn" title="Confirm" @onclick="ConfirmRename">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <button class="btn-se-icon fb-rename-btn" title="Cancel" @onclick="CancelRename">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @item.Name
+                                }
+                            </div>
                             <div class="fb-col-size">@item.FormattedSize</div>
                             <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm")</div>
                             <div class="fb-col-actions">
+                                <button class="btn-se-icon" title="Rename"
+                                        @onclick="() => StartRename(item)" @onclick:stopPropagation>
+                                    <i class="bi bi-pencil"></i>
+                                </button>
                                 <a class="btn-se-icon" href="@GetDownloadUrl(item)" target="_blank" title="Download"
                                    @onclick:stopPropagation>
                                     <i class="bi bi-download"></i>
@@ -214,14 +276,31 @@
                 {
                     @if (item.IsDirectory)
                     {
-                        <div class="fb-card fb-card-folder"
-                             @onclick="() => NavigateTo(item.RelativePath)">
+                        <div class="fb-card fb-card-folder @(selectedItem == item ? "selected" : "")"
+                             @onclick="() => { if (renamingItem != item) NavigateTo(item.RelativePath); }"
+                             @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-card-preview">
                                 <i class="bi bi-folder-fill fb-icon-folder-lg"></i>
                             </div>
                             <div class="fb-card-info">
-                                <div class="fb-card-name" title="@item.Name">@item.Name</div>
-                                <div class="fb-card-meta">Folder</div>
+                                @if (renamingItem == item)
+                                {
+                                    <div class="fb-rename-inline" @onclick:stopPropagation>
+                                        <input type="text" class="fb-rename-input fb-rename-input-grid" autofocus
+                                               @bind="renameValue" @onkeydown="OnRenameKeyDown" />
+                                        <button class="btn-se-icon fb-rename-btn" title="Confirm" @onclick="ConfirmRename">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <button class="btn-se-icon fb-rename-btn" title="Cancel" @onclick="CancelRename">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="fb-card-name" title="@item.Name">@item.Name</div>
+                                    <div class="fb-card-meta">Folder</div>
+                                }
                             </div>
                         </div>
                     }
@@ -229,7 +308,8 @@
                     {
                         <div class="fb-card @(selectedItem == item ? "selected" : "")"
                              @onclick="() => SelectItem(item)"
-                             @ondblclick="() => OpenItem(item)">
+                             @ondblclick="() => OpenItem(item)"
+                             @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-card-preview">
                                 @if (IsImageFile(item))
                                 {
@@ -241,8 +321,24 @@
                                 }
                             </div>
                             <div class="fb-card-info">
-                                <div class="fb-card-name" title="@item.Name">@item.Name</div>
-                                <div class="fb-card-meta">@item.FormattedSize</div>
+                                @if (renamingItem == item)
+                                {
+                                    <div class="fb-rename-inline" @onclick:stopPropagation>
+                                        <input type="text" class="fb-rename-input fb-rename-input-grid" autofocus
+                                               @bind="renameValue" @onkeydown="OnRenameKeyDown" />
+                                        <button class="btn-se-icon fb-rename-btn" title="Confirm" @onclick="ConfirmRename">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <button class="btn-se-icon fb-rename-btn" title="Cancel" @onclick="CancelRename">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="fb-card-name" title="@item.Name">@item.Name</div>
+                                    <div class="fb-card-meta">@item.FormattedSize</div>
+                                }
                             </div>
                         </div>
                     }
@@ -259,6 +355,37 @@
         </div>
     </div>
 </div>
+
+<!-- Context menu -->
+@if (showContextMenu && contextMenuItem is not null)
+{
+    <div class="ctx-backdrop" @onclick="CloseContextMenu" @oncontextmenu="CloseContextMenu" @oncontextmenu:preventDefault></div>
+    <div class="ctx-menu" style="left: @(contextMenuX)px; top: @(contextMenuY)px;" @onclick:stopPropagation>
+        <button class="ctx-item" @onclick="ContextMenuOpen">
+            <i class="bi @(contextMenuItem.IsDirectory ? "bi-folder2-open" : "bi-eye")"></i>
+            <span>@(contextMenuItem.IsDirectory ? "Open" : (contextMenuItem.IsPreviewable ? "Preview" : "Open"))</span>
+        </button>
+        @if (!contextMenuItem.IsDirectory)
+        {
+            <a class="ctx-item" href="@GetDownloadUrl(contextMenuItem)" target="_blank" @onclick="CloseContextMenu">
+                <i class="bi bi-download"></i>
+                <span>Download</span>
+            </a>
+        }
+        <div class="ctx-divider"></div>
+        <button class="ctx-item" @onclick="ContextMenuRename">
+            <i class="bi bi-pencil"></i>
+            <span>Rename</span>
+            <span class="ctx-shortcut">F2</span>
+        </button>
+        <div class="ctx-divider"></div>
+        <button class="ctx-item ctx-item-danger" @onclick="ContextMenuDelete">
+            <i class="bi bi-trash3"></i>
+            <span>Delete</span>
+            <span class="ctx-shortcut">Del</span>
+        </button>
+    </div>
+}
 
 <!-- Preview modal -->
 @if (previewItem is not null)
