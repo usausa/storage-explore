@@ -12,5 +12,5 @@
     <File Path="README.md" />
     <File Path="StorageExplore.sln.DotSettings" />
   </Folder>
-  <Project Path="StorageExplore/StorageExplore.csproj" Id="08a59d5f-b06d-48a5-a75e-bcd0c56e9d5f" />
+  <Project Path="StorageExplore/StorageExplore.csproj" />
 </Solution>
