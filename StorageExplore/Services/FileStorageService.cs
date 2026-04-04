@@ -234,7 +234,7 @@ public sealed class FileStorageService
     /// <summary>
     /// Gets the storage usage information for a bucket.
     /// </summary>
-    public (long totalBytes, long freeBytes) GetStorageInfo(string bucketName)
+    public (long TotalBytes, long FreeBytes) GetStorageInfo(string bucketName)
     {
         var bucketPath = GetBucketPath(bucketName);
         if (bucketPath is null)

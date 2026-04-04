@@ -13,7 +13,7 @@ public partial class FileBrowser : IAsyncDisposable
     public string? Path { get; set; }
 
     [CascadingParameter(Name = "Bucket")]
-    public string Bucket { get; set; } = "";
+    public string Bucket { get; set; } = string.Empty;
 
     [Inject]
     public FileStorageService Storage { get; set; } = default!;
@@ -33,10 +33,10 @@ public partial class FileBrowser : IAsyncDisposable
     private int uploadTotalCount;
     private long uploadedBytes;
     private long uploadTotalBytes;
-    private string uploadCurrentFile = "";
+    private string uploadCurrentFile = string.Empty;
     private string? uploadError;
     private bool showNewFolder;
-    private string newFolderName = "";
+    private string newFolderName = string.Empty;
     private bool showDeleteConfirm;
     private ViewMode viewMode = ViewMode.List;
     private SortField sortField = SortField.Name;
@@ -44,7 +44,7 @@ public partial class FileBrowser : IAsyncDisposable
 
     // Rename state
     private FileItem? renamingItem;
-    private string renameValue = "";
+    private string renameValue = string.Empty;
     private string? renameError;
 
     // Context menu state
@@ -58,7 +58,7 @@ public partial class FileBrowser : IAsyncDisposable
     private IJSObjectReference? jsModule;
     private DotNetObjectReference<FileBrowser>? dotNetRef;
 
-    private string previousBucket = "";
+    private string previousBucket = string.Empty;
     private bool isInitialized;
 
     protected override async Task OnParametersSetAsync()
@@ -94,7 +94,7 @@ public partial class FileBrowser : IAsyncDisposable
         try
         {
             var bucket = Bucket;
-            var path = Path ?? "";
+            var path = Path ?? string.Empty;
             items = await Task.Run(() => Storage.GetItems(bucket, path));
         }
         finally
@@ -115,7 +115,7 @@ public partial class FileBrowser : IAsyncDisposable
         if (string.IsNullOrEmpty(Path)) return;
 
         var lastSlash = Path.LastIndexOf('/');
-        var parentPath = lastSlash > 0 ? Path[..lastSlash] : "";
+        var parentPath = lastSlash > 0 ? Path[..lastSlash] : string.Empty;
         NavigateTo(parentPath);
     }
 
@@ -162,7 +162,7 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void ShowNewFolderDialog()
     {
-        newFolderName = "";
+        newFolderName = string.Empty;
         showNewFolder = true;
     }
 
@@ -173,7 +173,7 @@ public partial class FileBrowser : IAsyncDisposable
         var folderPath = string.IsNullOrEmpty(Path) ? newFolderName : $"{Path}/{newFolderName}";
         Storage.CreateDirectory(Bucket, folderPath);
         showNewFolder = false;
-        newFolderName = "";
+        newFolderName = string.Empty;
         await LoadItems();
     }
 
@@ -229,7 +229,7 @@ public partial class FileBrowser : IAsyncDisposable
         }
 
         renamingItem = null;
-        renameValue = "";
+        renameValue = string.Empty;
         renameError = null;
         await LoadItems();
     }
@@ -237,7 +237,7 @@ public partial class FileBrowser : IAsyncDisposable
     private void CancelRename()
     {
         renamingItem = null;
-        renameValue = "";
+        renameValue = string.Empty;
         renameError = null;
     }
 
@@ -316,7 +316,7 @@ public partial class FileBrowser : IAsyncDisposable
 
         var parts = Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var crumbs = new List<Breadcrumb>();
-        var accumulated = "";
+        var accumulated = string.Empty;
 
         for (var i = 0; i < parts.Length; i++)
         {
@@ -369,14 +369,14 @@ public partial class FileBrowser : IAsyncDisposable
 
     private MarkupString SortIndicator(SortField field)
     {
-        if (sortField != field) return new MarkupString("");
+        if (sortField != field) return new MarkupString(string.Empty);
         return new MarkupString(sortDescending
             ? "<i class=\"bi bi-chevron-down\" style=\"font-size:0.7rem\"></i>"
             : "<i class=\"bi bi-chevron-up\" style=\"font-size:0.7rem\"></i>");
     }
 
     [JSInvokable]
-    public string GetCurrentPath() => Path ?? "";
+    public string GetCurrentPath() => Path ?? string.Empty;
 
     [JSInvokable]
     public string GetCurrentBucket() => Bucket;
@@ -389,7 +389,7 @@ public partial class FileBrowser : IAsyncDisposable
         uploadTotalCount = totalCount;
         uploadedBytes = 0;
         uploadTotalBytes = totalBytes;
-        uploadCurrentFile = "";
+        uploadCurrentFile = string.Empty;
         uploadError = null;
         InvokeAsync(StateHasChanged);
     }
@@ -409,7 +409,7 @@ public partial class FileBrowser : IAsyncDisposable
     public async Task OnUploadCompleted()
     {
         isUploading = false;
-        uploadCurrentFile = "";
+        uploadCurrentFile = string.Empty;
         await LoadItems();
         await InvokeAsync(StateHasChanged);
     }
@@ -432,13 +432,22 @@ public partial class FileBrowser : IAsyncDisposable
 
     private sealed record Breadcrumb
     {
-        public string Name { get; init; } = "";
-        public string Path { get; init; } = "";
-        public string Url { get; init; } = "";
+        public string Name { get; init; } = string.Empty;
+        public string Path { get; init; } = string.Empty;
+        public string Url { get; init; } = string.Empty;
         public bool IsLast { get; init; }
     }
 
-    private enum ViewMode { List, Grid }
+    private enum ViewMode
+    {
+        List,
+        Grid,
+    }
 
-    private enum SortField { Name, Size, Modified }
+    private enum SortField
+    {
+        Name,
+        Size,
+        Modified,
+    }
 }

@@ -12,7 +12,7 @@ public partial class MainLayout
     [Inject]
     public NavigationManager Navigation { get; set; } = default!;
 
-    private string CurrentBucket { get; set; } = "";
+    private string CurrentBucket { get; set; } = string.Empty;
     private IReadOnlyList<string> BucketNames { get; set; } = [];
     private long TotalBytes { get; set; }
     private long FreeBytes { get; set; }
@@ -35,7 +35,7 @@ public partial class MainLayout
 
     private void OnBucketChanged(ChangeEventArgs e)
     {
-        var newBucket = e.Value?.ToString() ?? "";
+        var newBucket = e.Value?.ToString() ?? string.Empty;
         if (newBucket != CurrentBucket && Storage.Buckets.ContainsKey(newBucket))
         {
             CurrentBucket = newBucket;

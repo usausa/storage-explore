@@ -7,13 +7,16 @@ namespace StorageExplore.Components.Pages;
 
 public partial class FilePreview
 {
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public required FileItem Item { get; set; }
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public required string Bucket { get; set; }
 
-    [Parameter, EditorRequired]
+    [Parameter]
+    [EditorRequired]
     public required EventCallback OnClose { get; set; }
 
     [Inject]
@@ -35,7 +38,7 @@ public partial class FilePreview
         if (IsText)
         {
             textContent = await Storage.ReadTextAsync(Bucket, Item.RelativePath);
-            textContent ??= "";
+            textContent ??= string.Empty;
         }
     }
 }

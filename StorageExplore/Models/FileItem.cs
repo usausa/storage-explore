@@ -9,9 +9,9 @@ public sealed class FileItem
     public bool IsDirectory { get; set; }
     public long Size { get; set; }
     public DateTime LastModified { get; set; }
-    public string Extension => IsDirectory ? "" : Path.GetExtension(Name).ToLowerInvariant();
+    public string Extension => IsDirectory ? string.Empty : Path.GetExtension(Name).ToLowerInvariant();
 
-    public string FormattedSize => IsDirectory ? "" : FileHelper.FormatBytes(Size);
+    public string FormattedSize => IsDirectory ? string.Empty : FileHelper.FormatBytes(Size);
     public string IconCss => FileHelper.GetIconCss(Extension, IsDirectory);
     public bool IsPreviewable => !IsDirectory && FileHelper.IsPreviewable(Extension);
     public string ContentType => FileHelper.GetContentType(Extension);
