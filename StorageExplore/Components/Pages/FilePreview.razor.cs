@@ -1,9 +1,10 @@
+namespace StorageExplore.Components.Pages;
+
 using Microsoft.AspNetCore.Components;
+
 using StorageExplore.Helpers;
 using StorageExplore.Models;
 using StorageExplore.Services;
-
-namespace StorageExplore.Components.Pages;
 
 public partial class FilePreview
 {

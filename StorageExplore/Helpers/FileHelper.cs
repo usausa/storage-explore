@@ -64,18 +64,50 @@ public static class FileHelper
     public static string GetIconCss(string extension, bool isDirectory)
     {
         if (isDirectory)
+        {
             return "bi-folder-fill text-warning";
+        }
 
-        if (ImageExtensions.Contains(extension)) return "bi-file-image text-success";
-        if (VideoExtensions.Contains(extension)) return "bi-file-play text-danger";
-        if (AudioExtensions.Contains(extension)) return "bi-file-music text-info";
-        if (extension == ".pdf") return "bi-file-pdf text-danger";
-        if (extension is ".doc" or ".docx") return "bi-file-word text-primary";
-        if (extension is ".xls" or ".xlsx") return "bi-file-excel text-success";
-        if (extension is ".ppt" or ".pptx") return "bi-file-ppt text-warning";
-        if (ArchiveExtensions.Contains(extension)) return "bi-file-zip text-secondary";
-        if (TextExtensions.Contains(extension)) return "bi-file-text text-muted";
-        if (CodeExtensions.Contains(extension)) return "bi-file-code text-primary";
+        if (ImageExtensions.Contains(extension))
+        {
+            return "bi-file-image text-success";
+        }
+        if (VideoExtensions.Contains(extension))
+        {
+            return "bi-file-play text-danger";
+        }
+        if (AudioExtensions.Contains(extension))
+        {
+            return "bi-file-music text-info";
+        }
+        if (extension == ".pdf")
+        {
+            return "bi-file-pdf text-danger";
+        }
+        if (extension is ".doc" or ".docx")
+        {
+            return "bi-file-word text-primary";
+        }
+        if (extension is ".xls" or ".xlsx")
+        {
+            return "bi-file-excel text-success";
+        }
+        if (extension is ".ppt" or ".pptx")
+        {
+            return "bi-file-ppt text-warning";
+        }
+        if (ArchiveExtensions.Contains(extension))
+        {
+            return "bi-file-zip text-secondary";
+        }
+        if (TextExtensions.Contains(extension))
+        {
+            return "bi-file-text text-muted";
+        }
+        if (CodeExtensions.Contains(extension))
+        {
+            return "bi-file-code text-primary";
+        }
 
         return "bi-file-earmark text-muted";
     }

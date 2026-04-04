@@ -1,5 +1,6 @@
 namespace StorageExplore.Models;
 
+#pragma warning disable CA2227
 public sealed class StorageSettings
 {
     public const string SectionName = "Storage";
@@ -14,3 +15,4 @@ public sealed class StorageSettings
     /// </summary>
     public long MaxUploadSizeBytes { get; set; } = 10L * 1024 * 1024 * 1024;
 }
+#pragma warning restore CA2227

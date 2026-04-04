@@ -1,8 +1,9 @@
+namespace StorageExplore.Components.Layout;
+
 using Microsoft.AspNetCore.Components;
+
 using StorageExplore.Helpers;
 using StorageExplore.Services;
-
-namespace StorageExplore.Components.Layout;
 
 public partial class MainLayout
 {

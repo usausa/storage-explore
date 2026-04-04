@@ -1,6 +1,6 @@
-using StorageExplore.Helpers;
-
 namespace StorageExplore.Models;
+
+using StorageExplore.Helpers;
 
 public sealed class FileItem
 {

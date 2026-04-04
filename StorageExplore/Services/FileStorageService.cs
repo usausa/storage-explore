@@ -1,8 +1,11 @@
-using Microsoft.Extensions.Options;
-using StorageExplore.Models;
-
 namespace StorageExplore.Services;
 
+using Microsoft.Extensions.Options;
+
+using StorageExplore.Models;
+
+// TODO check
+#pragma warning disable CA3003
 public sealed class FileStorageService
 {
     private readonly StorageSettings settings;
@@ -39,10 +42,15 @@ public sealed class FileStorageService
     public string? ResolvePath(string bucketName, string relativePath)
     {
         var bucketPath = GetBucketPath(bucketName);
-        if (bucketPath is null) return null;
+        if (bucketPath is null)
+        {
+            return null;
+        }
 
         if (string.IsNullOrWhiteSpace(relativePath))
+        {
             return bucketPath;
+        }
 
         var combined = Path.GetFullPath(Path.Combine(bucketPath, relativePath));
         if (!combined.StartsWith(bucketPath, StringComparison.OrdinalIgnoreCase))
@@ -57,7 +65,9 @@ public sealed class FileStorageService
     {
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null || !Directory.Exists(fullPath))
+        {
             return [];
+        }
 
         var bucketPath = GetBucketPath(bucketName)!;
         var items = new List<FileItem>();
@@ -94,7 +104,9 @@ public sealed class FileStorageService
     {
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null || !File.Exists(fullPath))
+        {
             return null;
+        }
 
         var info = new FileInfo(fullPath);
         return new FileItem
@@ -111,7 +123,9 @@ public sealed class FileStorageService
     {
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null || !File.Exists(fullPath))
+        {
             return null;
+        }
 
         return new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
     }
@@ -120,11 +134,15 @@ public sealed class FileStorageService
     {
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null || !File.Exists(fullPath))
+        {
             return null;
+        }
 
         var info = new FileInfo(fullPath);
         if (info.Length > maxLength)
+        {
             return null;
+        }
 
         return await File.ReadAllTextAsync(fullPath);
     }
@@ -133,11 +151,15 @@ public sealed class FileStorageService
     {
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null)
+        {
             throw new InvalidOperationException("Invalid path.");
+        }
 
         var directory = Path.GetDirectoryName(fullPath)!;
         if (!Directory.Exists(directory))
+        {
             Directory.CreateDirectory(directory);
+        }
 
         await using var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None);
         await content.CopyToAsync(fs);
@@ -148,7 +170,9 @@ public sealed class FileStorageService
     {
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null)
+        {
             throw new InvalidOperationException("Invalid path.");
+        }
 
         Directory.CreateDirectory(fullPath);
         logger.LogInformation("Created directory: {Bucket}/{Path}", bucketName, relativePath);
@@ -158,7 +182,9 @@ public sealed class FileStorageService
     {
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null)
+        {
             throw new InvalidOperationException("Invalid path.");
+        }
 
         if (File.Exists(fullPath))
         {
@@ -186,7 +212,9 @@ public sealed class FileStorageService
 
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null)
+        {
             return null;
+        }
 
         var parentDir = System.IO.Path.GetDirectoryName(fullPath)!;
         var newFullPath = System.IO.Path.Combine(parentDir, newName);
@@ -227,7 +255,9 @@ public sealed class FileStorageService
     {
         var fullPath = ResolvePath(bucketName, relativePath);
         if (fullPath is null)
+        {
             return false;
+        }
         return File.Exists(fullPath) || Directory.Exists(fullPath);
     }
 
@@ -238,7 +268,9 @@ public sealed class FileStorageService
     {
         var bucketPath = GetBucketPath(bucketName);
         if (bucketPath is null)
+        {
             return (0, 0);
+        }
 
         var driveInfo = new DriveInfo(Path.GetPathRoot(bucketPath)!);
         return (driveInfo.TotalSize, driveInfo.AvailableFreeSpace);

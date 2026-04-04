@@ -1,11 +1,12 @@
+namespace StorageExplore.Components.Pages;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+
 using StorageExplore.Helpers;
 using StorageExplore.Models;
 using StorageExplore.Services;
-
-namespace StorageExplore.Components.Pages;
 
 public partial class FileBrowser : IAsyncDisposable
 {
@@ -61,7 +62,7 @@ public partial class FileBrowser : IAsyncDisposable
     private string previousBucket = string.Empty;
     private bool isInitialized;
 
-    protected override async Task OnParametersSetAsync()
+    protected override Task OnParametersSetAsync()
     {
         if (!isInitialized)
         {
@@ -74,7 +75,7 @@ public partial class FileBrowser : IAsyncDisposable
             Path = null;
         }
 
-        await LoadItems();
+        return LoadItems();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -112,7 +113,10 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void NavigateUp()
     {
-        if (string.IsNullOrEmpty(Path)) return;
+        if (string.IsNullOrEmpty(Path))
+        {
+            return;
+        }
 
         var lastSlash = Path.LastIndexOf('/');
         var parentPath = lastSlash > 0 ? Path[..lastSlash] : string.Empty;
@@ -166,39 +170,53 @@ public partial class FileBrowser : IAsyncDisposable
         showNewFolder = true;
     }
 
-    private async Task CreateFolder()
+    private Task CreateFolder()
     {
-        if (string.IsNullOrWhiteSpace(newFolderName)) return;
+        if (string.IsNullOrWhiteSpace(newFolderName))
+        {
+            return Task.CompletedTask;
+        }
 
         var folderPath = string.IsNullOrEmpty(Path) ? newFolderName : $"{Path}/{newFolderName}";
         Storage.CreateDirectory(Bucket, folderPath);
         showNewFolder = false;
         newFolderName = string.Empty;
-        await LoadItems();
+        return LoadItems();
     }
 
-    private async Task OnNewFolderKeyDown(KeyboardEventArgs e)
+    private Task OnNewFolderKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
-            await CreateFolder();
+        {
+            return CreateFolder();
+        }
         else if (e.Key == "Escape")
+        {
             showNewFolder = false;
+        }
+        return Task.CompletedTask;
     }
 
     private void DeleteSelected()
     {
-        if (selectedItem is null) return;
+        if (selectedItem is null)
+        {
+            return;
+        }
         showDeleteConfirm = true;
     }
 
-    private async Task ConfirmDelete()
+    private Task ConfirmDelete()
     {
-        if (selectedItem is null) return;
+        if (selectedItem is null)
+        {
+            return Task.CompletedTask;
+        }
 
         Storage.Delete(Bucket, selectedItem.RelativePath);
         showDeleteConfirm = false;
         selectedItem = null;
-        await LoadItems();
+        return LoadItems();
     }
 
     // ---- Rename ----
@@ -210,28 +228,30 @@ public partial class FileBrowser : IAsyncDisposable
         renameError = null;
     }
 
-    private async Task ConfirmRename()
+    private Task ConfirmRename()
     {
         if (renamingItem is null || string.IsNullOrWhiteSpace(renameValue))
-            return;
+        {
+            return Task.CompletedTask;
+        }
 
         if (renameValue == renamingItem.Name)
         {
             CancelRename();
-            return;
+            return Task.CompletedTask;
         }
 
         var newPath = Storage.Rename(Bucket, renamingItem.RelativePath, renameValue.Trim());
         if (newPath is null)
         {
             renameError = "Rename failed. Name may already exist or contain invalid characters.";
-            return;
+            return Task.CompletedTask;
         }
 
         renamingItem = null;
         renameValue = string.Empty;
         renameError = null;
-        await LoadItems();
+        return LoadItems();
     }
 
     private void CancelRename()
@@ -241,12 +261,17 @@ public partial class FileBrowser : IAsyncDisposable
         renameError = null;
     }
 
-    private async Task OnRenameKeyDown(KeyboardEventArgs e)
+    private Task OnRenameKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
-            await ConfirmRename();
+        {
+            return ConfirmRename();
+        }
         else if (e.Key == "Escape")
+        {
             CancelRename();
+        }
+        return Task.CompletedTask;
     }
 
     // ---- Context menu ----
@@ -268,7 +293,10 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void ContextMenuOpen()
     {
-        if (contextMenuItem is null) return;
+        if (contextMenuItem is null)
+        {
+            return;
+        }
         var item = contextMenuItem;
         CloseContextMenu();
 
@@ -284,7 +312,10 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void ContextMenuRename()
     {
-        if (contextMenuItem is null) return;
+        if (contextMenuItem is null)
+        {
+            return;
+        }
         var item = contextMenuItem;
         CloseContextMenu();
         StartRename(item);
@@ -292,7 +323,10 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void ContextMenuDelete()
     {
-        if (contextMenuItem is null) return;
+        if (contextMenuItem is null)
+        {
+            return;
+        }
         selectedItem = contextMenuItem;
         CloseContextMenu();
         showDeleteConfirm = true;
@@ -312,7 +346,10 @@ public partial class FileBrowser : IAsyncDisposable
 
     private List<Breadcrumb> GetBreadcrumbs()
     {
-        if (string.IsNullOrEmpty(Path)) return [];
+        if (string.IsNullOrEmpty(Path))
+        {
+            return [];
+        }
 
         var parts = Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var crumbs = new List<Breadcrumb>();
@@ -336,7 +373,9 @@ public partial class FileBrowser : IAsyncDisposable
     private void SortBy(SortField field)
     {
         if (sortField == field)
+        {
             sortDescending = !sortDescending;
+        }
         else
         {
             sortField = field;
@@ -369,7 +408,10 @@ public partial class FileBrowser : IAsyncDisposable
 
     private MarkupString SortIndicator(SortField field)
     {
-        if (sortField != field) return new MarkupString(string.Empty);
+        if (sortField != field)
+        {
+            return new MarkupString(string.Empty);
+        }
         return new MarkupString(sortDescending
             ? "<i class=\"bi bi-chevron-down\" style=\"font-size:0.7rem\"></i>"
             : "<i class=\"bi bi-chevron-up\" style=\"font-size:0.7rem\"></i>");
@@ -421,13 +463,14 @@ public partial class FileBrowser : IAsyncDisposable
         InvokeAsync(StateHasChanged);
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         dotNetRef?.Dispose();
         if (jsModule is not null)
         {
-            await jsModule.DisposeAsync();
+            return jsModule.DisposeAsync();
         }
+        return ValueTask.CompletedTask;
     }
 
     private sealed record Breadcrumb
