@@ -16,8 +16,8 @@ public class FilesController : ControllerBase
         this.storage = storage;
     }
 
-    [HttpGet("download")]
-    public IActionResult Download([FromQuery] string bucket, [FromQuery] string path)
+    [HttpGet("download/{bucket}/{**path}")]
+    public IActionResult Download(string bucket, string path)
     {
         var fileInfo = storage.GetFileInfo(bucket, path);
         if (fileInfo is null)
@@ -34,8 +34,8 @@ public class FilesController : ControllerBase
         return File(stream, "application/octet-stream", fileInfo.Name);
     }
 
-    [HttpGet("preview")]
-    public IActionResult Preview([FromQuery] string bucket, [FromQuery] string path)
+    [HttpGet("preview/{bucket}/{**path}")]
+    public IActionResult Preview(string bucket, string path)
     {
         var fileInfo = storage.GetFileInfo(bucket, path);
         if (fileInfo is null)
@@ -54,8 +54,8 @@ public class FilesController : ControllerBase
         return File(stream, fileInfo.ContentType, enableRangeProcessing: true);
     }
 
-    [HttpGet("thumbnail")]
-    public IActionResult Thumbnail([FromQuery] string bucket, [FromQuery] string path)
+    [HttpGet("thumbnail/{bucket}/{**path}")]
+    public IActionResult Thumbnail(string bucket, string path)
     {
         var fileInfo = storage.GetFileInfo(bucket, path);
         if (fileInfo is null)
@@ -80,10 +80,10 @@ public class FilesController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("upload")]
+    [HttpPost("upload/{bucket}/{**path}")]
     [RequestSizeLimit(10L * 1024 * 1024 * 1024)]
     [RequestFormLimits(MultipartBodyLengthLimit = 10L * 1024 * 1024 * 1024)]
-    public async Task<IActionResult> Upload([FromQuery] string bucket, [FromQuery] string path = "")
+    public async Task<IActionResult> Upload(string bucket, string path = "")
     {
         if (Request.Form.Files.Count == 0)
         {
@@ -106,8 +106,8 @@ public class FilesController : ControllerBase
         return Ok(new { uploaded = results.Count, files = results });
     }
 
-    [HttpPost("create-folder")]
-    public IActionResult CreateFolder([FromQuery] string bucket, [FromQuery] string path)
+    [HttpPost("create-folder/{bucket}/{**path}")]
+    public IActionResult CreateFolder(string bucket, string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -123,8 +123,8 @@ public class FilesController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("rename")]
-    public IActionResult Rename([FromQuery] string bucket, [FromQuery] string path, [FromQuery] string newName)
+    [HttpPost("rename/{bucket}/{**path}")]
+    public IActionResult Rename(string bucket, string path, [FromQuery] string newName)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -149,8 +149,8 @@ public class FilesController : ControllerBase
         return Ok(new { newPath });
     }
 
-    [HttpDelete]
-    public IActionResult Delete([FromQuery] string bucket, [FromQuery] string path)
+    [HttpDelete("{bucket}/{**path}")]
+    public IActionResult Delete(string bucket, string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {

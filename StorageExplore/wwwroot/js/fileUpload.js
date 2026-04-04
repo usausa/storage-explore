@@ -166,8 +166,8 @@ async function sendBatch(batch, dotNetHelper) {
             fd.append('files', file, file.name);
         }
         const encodedBucket = encodeURIComponent(currentBucket);
-        const encodedPath = encodeURIComponent(uploadPath);
-        const response = await fetch(`/api/files/upload?bucket=${encodedBucket}&path=${encodedPath}`, {
+        const encodedPath = uploadPath ? uploadPath.split('/').map(encodeURIComponent).join('/') : '';
+        const response = await fetch(`/api/files/upload/${encodedBucket}/${encodedPath}`, {
             method: 'POST',
             body: fd
         });
@@ -193,10 +193,10 @@ function uploadLargeFile(file, relativePath, dotNetHelper, onProgress) {
         const fd = new FormData();
         fd.append('files', file, file.name);
         const encodedBucket = encodeURIComponent(currentBucket);
-        const encodedPath = encodeURIComponent(uploadPath);
+        const encodedPath = uploadPath ? uploadPath.split('/').map(encodeURIComponent).join('/') : '';
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', `/api/files/upload?bucket=${encodedBucket}&path=${encodedPath}`);
+        xhr.open('POST', `/api/files/upload/${encodedBucket}/${encodedPath}`);
 
         xhr.upload.addEventListener('progress', (e) => {
             if (e.lengthComputable && onProgress) {

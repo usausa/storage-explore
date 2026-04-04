@@ -334,12 +334,12 @@ public partial class FileBrowser : IAsyncDisposable
 
     private string GetDownloadUrl(FileItem item)
     {
-        return $"/api/files/download?bucket={Uri.EscapeDataString(Bucket)}&path={Uri.EscapeDataString(item.RelativePath)}";
+        return $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(item.RelativePath)}";
     }
 
     private string GetThumbnailUrl(FileItem item)
     {
-        return $"/api/files/thumbnail?bucket={Uri.EscapeDataString(Bucket)}&path={Uri.EscapeDataString(item.RelativePath)}";
+        return $"/api/files/thumbnail/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(item.RelativePath)}";
     }
 
     private static bool IsImageFile(FileItem item) => FileHelper.HasThumbnail(item.Extension);

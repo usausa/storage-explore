@@ -25,8 +25,8 @@ public partial class FilePreview
 
     private string? textContent;
 
-    private string PreviewUrl => $"/api/files/preview?bucket={Uri.EscapeDataString(Bucket)}&path={Uri.EscapeDataString(Item.RelativePath)}";
-    private string DownloadUrl => $"/api/files/download?bucket={Uri.EscapeDataString(Bucket)}&path={Uri.EscapeDataString(Item.RelativePath)}";
+    private string PreviewUrl => $"/api/files/preview/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(Item.RelativePath)}";
+    private string DownloadUrl => $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(Item.RelativePath)}";
 
     private bool IsImage => FileHelper.IsImage(Item.Extension);
     private bool IsVideo => FileHelper.IsVideo(Item.Extension);

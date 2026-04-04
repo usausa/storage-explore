@@ -138,4 +138,20 @@ public static class FileHelper
         ".js" => "application/javascript",
         _ => "application/octet-stream"
     };
+
+    // ---- URL path encoding ----
+
+    /// <summary>
+    /// Encodes each segment of a relative path for use in a URL path.
+    /// Slashes are preserved; individual segments are percent-encoded.
+    /// </summary>
+    public static string EncodePathSegments(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return string.Empty;
+        }
+
+        return string.Join('/', path.Split('/').Select(Uri.EscapeDataString));
+    }
 }
