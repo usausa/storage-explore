@@ -36,7 +36,9 @@ public static class FileEndpoint
             return Results.NotFound();
         }
 
+#pragma warning disable CA2000
         var stream = storage.OpenRead(bucket, path);
+#pragma warning restore CA2000
         if (stream is null)
         {
             return Results.NotFound();
@@ -57,7 +59,9 @@ public static class FileEndpoint
             return Results.NotFound();
         }
 
+#pragma warning disable CA2000
         var stream = storage.OpenRead(bucket, path);
+#pragma warning restore CA2000
         if (stream is null)
         {
             return Results.NotFound();
@@ -82,7 +86,9 @@ public static class FileEndpoint
             return Results.NoContent();
         }
 
+#pragma warning disable CA2000
         var stream = storage.OpenRead(bucket, path);
+#pragma warning restore CA2000
         if (stream is null)
         {
             return Results.NotFound();

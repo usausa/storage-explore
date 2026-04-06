@@ -9,8 +9,9 @@ public sealed class FileItem
     public bool IsDirectory { get; set; }
     public long Size { get; set; }
     public DateTime LastModified { get; set; }
+#pragma warning disable CA1308
     public string Extension => IsDirectory ? string.Empty : Path.GetExtension(Name).ToLowerInvariant();
-
+#pragma warning restore CA1308
     public string FormattedSize => IsDirectory ? string.Empty : FormatBytes(Size);
     public string IconCss => GetIconCss(Extension, IsDirectory);
     public bool IsPreviewable => !IsDirectory && IsPreviewable(Extension);

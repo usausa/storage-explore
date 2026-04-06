@@ -85,6 +85,7 @@ public partial class FileBrowser : IAsyncDisposable
 
     public ValueTask DisposeAsync()
     {
+        GC.SuppressFinalize(this);
         dotNetRef?.Dispose();
         if (jsModule is not null)
         {
@@ -388,14 +389,18 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void ShowUploadDialog()
     {
-        JS.InvokeVoidAsync("eval", "document.querySelector('.fb input[type=file]').click()");
+        _ = JS.InvokeVoidAsync("eval", "document.querySelector('.fb input[type=file]').click()").AsTask();
     }
 
     [JSInvokable]
+#pragma warning disable CA1024
     public string GetCurrentPath() => Path ?? string.Empty;
+#pragma warning restore CA1024
 
     [JSInvokable]
+#pragma warning disable CA1024
     public string GetCurrentBucket() => Bucket;
+#pragma warning restore CA1024
 
     [JSInvokable]
     public void OnUploadStarted(int totalCount, long totalBytes)

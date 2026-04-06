@@ -4,24 +4,23 @@ using Microsoft.Extensions.Options;
 
 using StorageExplore.Models;
 
-// TODO check
 #pragma warning disable CA3003
 public sealed class FileStorageService
 {
     private readonly StorageSettings settings;
-    private readonly ILogger<FileStorageService> logger;
+    private readonly ILogger<FileStorageService> log;
 
-    public FileStorageService(IOptions<StorageSettings> options, ILogger<FileStorageService> logger)
+    public FileStorageService(IOptions<StorageSettings> options, ILogger<FileStorageService> log)
     {
         settings = options.Value;
-        this.logger = logger;
+        this.log = log;
 
         foreach (var (name, path) in settings.Buckets)
         {
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
-                logger.LogInformation("Created bucket directory: {Name} -> {Path}", name, path);
+                log.InfoBucketDirectoryCreated(name, path);
             }
         }
     }
@@ -55,7 +54,7 @@ public sealed class FileStorageService
         var combined = Path.GetFullPath(Path.Combine(bucketPath, relativePath));
         if (!combined.StartsWith(bucketPath, StringComparison.OrdinalIgnoreCase))
         {
-            logger.LogWarning("Path traversal attempt: {Bucket}/{Path}", bucketName, relativePath);
+            log.WarnPathTraversal(bucketName, relativePath);
             return null;
         }
         return combined;
@@ -163,7 +162,7 @@ public sealed class FileStorageService
 
         await using var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None);
         await content.CopyToAsync(fs);
-        logger.LogInformation("Saved file: {Bucket}/{Path} ({Size} bytes)", bucketName, relativePath, fs.Length);
+        log.InfoFileSaved(bucketName, relativePath, fs.Length);
     }
 
     public void CreateDirectory(string bucketName, string relativePath)
@@ -175,7 +174,7 @@ public sealed class FileStorageService
         }
 
         Directory.CreateDirectory(fullPath);
-        logger.LogInformation("Created directory: {Bucket}/{Path}", bucketName, relativePath);
+        log.InfoDirectoryCreated(bucketName, relativePath);
     }
 
     public void Delete(string bucketName, string relativePath)
@@ -189,12 +188,12 @@ public sealed class FileStorageService
         if (File.Exists(fullPath))
         {
             File.Delete(fullPath);
-            logger.LogInformation("Deleted file: {Bucket}/{Path}", bucketName, relativePath);
+            log.InfoFileDeleted(bucketName, relativePath);
         }
         else if (Directory.Exists(fullPath))
         {
             Directory.Delete(fullPath, recursive: true);
-            logger.LogInformation("Deleted directory: {Bucket}/{Path}", bucketName, relativePath);
+            log.InfoDirectoryDeleted(bucketName, relativePath);
         }
     }
 
@@ -204,9 +203,9 @@ public sealed class FileStorageService
     /// </summary>
     public string? Rename(string bucketName, string relativePath, string newName)
     {
-        if (string.IsNullOrWhiteSpace(newName) || newName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) >= 0)
+        if (string.IsNullOrWhiteSpace(newName) || newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
         {
-            logger.LogWarning("Invalid rename target name: {NewName}", newName);
+            log.WarnInvalidRenameName(newName);
             return null;
         }
 
@@ -216,39 +215,39 @@ public sealed class FileStorageService
             return null;
         }
 
-        var parentDir = System.IO.Path.GetDirectoryName(fullPath)!;
-        var newFullPath = System.IO.Path.Combine(parentDir, newName);
+        var parentDir = Path.GetDirectoryName(fullPath)!;
+        var newFullPath = Path.Combine(parentDir, newName);
 
         // Ensure the new path stays within the bucket
         var bucketPath = GetBucketPath(bucketName)!;
         if (!newFullPath.StartsWith(bucketPath, StringComparison.OrdinalIgnoreCase))
         {
-            logger.LogWarning("Rename path traversal attempt: {Bucket}/{Path} -> {NewName}", bucketName, relativePath, newName);
+            log.WarnRenamePathTraversal(bucketName, relativePath, newName);
             return null;
         }
 
         if (File.Exists(newFullPath) || Directory.Exists(newFullPath))
         {
-            logger.LogWarning("Rename target already exists: {Path}", newFullPath);
+            log.WarnRenameTargetExists(newFullPath);
             return null;
         }
 
         if (File.Exists(fullPath))
         {
             File.Move(fullPath, newFullPath);
-            logger.LogInformation("Renamed file: {Bucket}/{OldPath} -> {NewName}", bucketName, relativePath, newName);
+            log.InfoFileRenamed(bucketName, relativePath, newName);
         }
         else if (Directory.Exists(fullPath))
         {
             Directory.Move(fullPath, newFullPath);
-            logger.LogInformation("Renamed directory: {Bucket}/{OldPath} -> {NewName}", bucketName, relativePath, newName);
+            log.InfoDirectoryRenamed(bucketName, relativePath, newName);
         }
         else
         {
             return null;
         }
 
-        return System.IO.Path.GetRelativePath(bucketPath, newFullPath).Replace('\\', '/');
+        return Path.GetRelativePath(bucketPath, newFullPath).Replace('\\', '/');
     }
 
     public bool Exists(string bucketName, string relativePath)

@@ -23,7 +23,7 @@ public partial class MainLayout
     //--------------------------------------------------------------------------------
 
     private string CurrentBucket { get; set; } = string.Empty;
-    private IReadOnlyList<string> BucketNames { get; set; } = [];
+    private List<string> BucketNames { get; set; } = [];
     private long TotalBytes { get; set; }
     private long FreeBytes { get; set; }
 

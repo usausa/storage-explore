@@ -41,19 +41,13 @@ public partial class FilePreview
     private string PreviewUrl => $"/api/files/preview/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(Item.RelativePath)}";
     private string DownloadUrl => $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(Item.RelativePath)}";
 
-    private bool IsImage => IsImageExt(Item.Extension);
-    private bool IsVideo => IsVideoExt(Item.Extension);
-    private bool IsAudio => IsAudioExt(Item.Extension);
-    private bool IsPdf => IsPdfExt(Item.Extension);
-    private bool IsText => IsTextExt(Item.Extension);
-
     //--------------------------------------------------------------------------------
     // Lifecycle
     //--------------------------------------------------------------------------------
 
     protected override async Task OnParametersSetAsync()
     {
-        if (IsText)
+        if (IsTextExt(Item.Extension))
         {
             textContent = await Storage.ReadTextAsync(Bucket, Item.RelativePath);
             textContent ??= string.Empty;

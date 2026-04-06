@@ -16,13 +16,13 @@
         </div>
     </div>
     <div class="fp-body">
-        @if (IsImage)
+        @if (IsImageExt(Item.Extension))
         {
             <div class="fp-center">
                 <img src="@PreviewUrl" alt="@Item.Name" class="fp-image" />
             </div>
         }
-        else if (IsVideo)
+        else if (IsVideoExt(Item.Extension))
         {
             <div class="fp-center">
                 <video controls class="fp-video" autoplay>
@@ -31,7 +31,7 @@
                 </video>
             </div>
         }
-        else if (IsAudio)
+        else if (IsAudioExt(Item.Extension))
         {
             <div class="fp-center fp-audio-wrap">
                 <div class="fp-audio-icon">
@@ -44,11 +44,11 @@
                 </audio>
             </div>
         }
-        else if (IsPdf)
+        else if (IsPdfExt(Item.Extension))
         {
             <iframe src="@PreviewUrl" class="fp-pdf"></iframe>
         }
-        else if (IsText)
+        else if (IsTextExt(Item.Extension))
         {
             <div class="fp-text-wrap">
                 @if (textContent is null)
