@@ -261,6 +261,10 @@
                                    @onclick:stopPropagation>
                                     <i class="bi bi-download"></i>
                                 </a>
+                                <button class="btn-se-icon" title="Delete"
+                                        @onclick="() => DeleteItem(item)" @onclick:stopPropagation>
+                                    <i class="bi bi-trash3"></i>
+                                </button>
                             </div>
                         </div>
                     }
@@ -402,6 +406,32 @@
 @if (previewItem is not null)
 {
     <FilePreview Item="previewItem" Bucket="@Bucket" OnClose="ClosePreview" />
+}
+
+<!-- Upload overwrite confirmation -->
+@if (showOverwriteConfirm)
+{
+    <div class="fb-modal-backdrop" @onclick="CancelOverwrite"></div>
+    <div class="fb-modal" @onclick:stopPropagation>
+        <div class="fb-modal-header">
+            <span>File already exists</span>
+            <button class="btn-se-icon" @onclick="CancelOverwrite"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="fb-modal-body">
+            <p>The following files already exist in this location:</p>
+            <ul class="fb-overwrite-list">
+                @foreach (var name in overwriteFileNames)
+                {
+                    <li><strong>@name</strong></li>
+                }
+            </ul>
+            <p>Do you want to overwrite them?</p>
+        </div>
+        <div class="fb-modal-footer">
+            <button class="btn-se-ghost" @onclick="CancelOverwrite">Cancel</button>
+            <button class="btn-se-primary" @onclick="ConfirmOverwrite">Overwrite</button>
+        </div>
+    </div>
 }
 
 <!-- Delete confirmation modal -->

@@ -82,6 +82,14 @@ async function collectFiles(entries) {
 }
 
 async function uploadFiles(fileList, dotNetHelper) {
+    // Check for duplicates and get confirmation
+    const fileNames = fileList.map(f => {
+        const rp = f.relativePath;
+        return rp.includes('/') ? rp : f.file.name;
+    });
+    const proceed = await dotNetHelper.invokeMethodAsync('CheckDuplicates', fileNames);
+    if (!proceed) return;
+
     const batchThreshold = 50 * 1024 * 1024; // 50MB per batch
     const totalFiles = fileList.length;
     const totalBytes = fileList.reduce((sum, f) => sum + f.file.size, 0);

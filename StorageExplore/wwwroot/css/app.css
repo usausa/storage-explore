@@ -749,12 +749,13 @@ a.fb-crumb:hover {
 }
 
 .fb-col-actions {
-    width: 44px;
+    width: 120px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    opacity: 0;
+    justify-content: flex-end;
+    gap: 2px;
+    opacity: 0.3;
     transition: opacity var(--se-transition);
 }
 
@@ -980,6 +981,18 @@ a.fb-crumb:hover {
     gap: 8px;
     padding: 12px 20px;
     border-top: 1px solid var(--se-border-light);
+}
+
+.fb-overwrite-list {
+    margin: 8px 0;
+    padding-left: 20px;
+    font-size: 0.85rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.fb-overwrite-list li {
+    margin-bottom: 4px;
 }
 
 /* ============================================

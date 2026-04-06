@@ -54,6 +54,11 @@ public partial class FileBrowser : IAsyncDisposable
     private double contextMenuY;
     private FileItem? contextMenuItem;
 
+    // Overwrite confirmation state
+    private bool showOverwriteConfirm;
+    private List<string> overwriteFileNames = [];
+    private TaskCompletionSource<bool>? overwriteTcs;
+
     private ElementReference dropZoneRef;
     private ElementReference fileInputRef;
     private IJSObjectReference? jsModule;
@@ -339,7 +344,7 @@ public partial class FileBrowser : IAsyncDisposable
 
     private string GetThumbnailUrl(FileItem item)
     {
-        return $"/api/files/thumbnail/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(item.RelativePath)}";
+        return $"/api/files/thumbnail/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(item.RelativePath)}?t={item.LastModified.Ticks}";
     }
 
     private static bool IsImageFile(FileItem item) => FileHelper.HasThumbnail(item.Extension);
@@ -422,6 +427,40 @@ public partial class FileBrowser : IAsyncDisposable
 
     [JSInvokable]
     public string GetCurrentBucket() => Bucket;
+
+    [JSInvokable]
+    public async Task<bool> CheckDuplicates(string[] fileNames)
+    {
+        var existingNames = items
+            .Where(i => !i.IsDirectory)
+            .Select(i => i.Name)
+            .ToHashSet(StringComparer.Ordinal);
+
+        var duplicates = fileNames.Where(existingNames.Contains).ToList();
+        if (duplicates.Count == 0)
+        {
+            return true;
+        }
+
+        overwriteFileNames = duplicates;
+        showOverwriteConfirm = true;
+        overwriteTcs = new TaskCompletionSource<bool>();
+        StateHasChanged();
+
+        return await overwriteTcs.Task;
+    }
+
+    private void ConfirmOverwrite()
+    {
+        showOverwriteConfirm = false;
+        overwriteTcs?.TrySetResult(true);
+    }
+
+    private void CancelOverwrite()
+    {
+        showOverwriteConfirm = false;
+        overwriteTcs?.TrySetResult(false);
+    }
 
     [JSInvokable]
     public void OnUploadStarted(int totalCount, long totalBytes)

@@ -1,8 +1,14 @@
+using Serilog;
+
 using StorageExplore.Components;
 using StorageExplore.Models;
 using StorageExplore.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Logging
+builder.Logging.ClearProviders();
+builder.Services.AddSerilog(options => options.ReadFrom.Configuration(builder.Configuration));
 
 // Configuration
 builder.Services.Configure<StorageSettings>(builder.Configuration.GetSection(StorageSettings.SectionName));
