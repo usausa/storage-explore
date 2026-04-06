@@ -1,6 +1,7 @@
 using Serilog;
 
 using StorageExplore.Components;
+using StorageExplore.Endpoints;
 using StorageExplore.Models;
 using StorageExplore.Services;
 
@@ -17,7 +18,6 @@ builder.Services.AddSingleton<FileStorageService>();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddControllers();
 
 // Configure Kestrel for large file uploads
 builder.WebHost.ConfigureKestrel(options =>
@@ -39,7 +39,7 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-app.MapControllers();
+app.MapFileEndpoints();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

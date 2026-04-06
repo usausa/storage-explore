@@ -40,11 +40,11 @@ public static class FileHelper
 
     // ---- Type checks ----
 
-    public static bool IsImage(string extension) => ImageExtensions.Contains(extension);
-    public static bool IsVideo(string extension) => VideoExtensions.Contains(extension);
-    public static bool IsAudio(string extension) => AudioExtensions.Contains(extension);
-    public static bool IsPdf(string extension) => extension == ".pdf";
-    public static bool IsText(string extension) => PreviewTextExtensions.Contains(extension);
+    public static bool IsImageExt(string extension) => ImageExtensions.Contains(extension);
+    public static bool IsVideoExt(string extension) => VideoExtensions.Contains(extension);
+    public static bool IsAudioExt(string extension) => AudioExtensions.Contains(extension);
+    public static bool IsPdfExt(string extension) => extension == ".pdf";
+    public static bool IsTextExt(string extension) => PreviewTextExtensions.Contains(extension);
     public static bool IsPreviewable(string extension) => PreviewableExtensions.Contains(extension);
     public static bool HasThumbnail(string extension) => ThumbnailExtensions.Contains(extension);
 

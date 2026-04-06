@@ -1,6 +1,5 @@
 /* ============================================
    StorageExplore – Global Styles
-   Owncloud / Dropbox-inspired design
    ============================================ */
 
 /* ---- Inter font (local) ---- */
@@ -103,6 +102,63 @@ h1:focus {
 .text-info { color: #3b82f6; }
 .text-secondary { color: var(--se-text-secondary); }
 .text-muted { color: var(--se-text-muted); }
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* ============================================
+   Blazor Framework
+   ============================================ */
+
+.blazor-error-boundary {
+    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
+    padding: 1rem 1rem 1rem 3.7rem;
+    color: white;
+}
+
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
+
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
 
 /* ============================================
    Buttons – Clean, minimal
@@ -217,42 +273,6 @@ h1:focus {
 
 @keyframes se-spin {
     to { transform: rotate(360deg); }
-}
-
-/* ============================================
-   Blazor error boundary
-   ============================================ */
-
-.blazor-error-boundary {
-    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
-    padding: 1rem 1rem 1rem 3.7rem;
-    color: white;
-}
-
-.blazor-error-boundary::after {
-    content: "An error has occurred."
-}
-
-/* ============================================
-   Scrollbar styling
-   ============================================ */
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
 }
 
 /* ============================================
@@ -403,29 +423,6 @@ h1:focus {
     flex: 1;
     display: flex;
     flex-direction: column;
-}
-
-/* Error UI */
-
-#blazor-error-ui {
-    color-scheme: light only;
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
-}
-
-#blazor-error-ui .dismiss {
-    cursor: pointer;
-    position: absolute;
-    right: 0.75rem;
-    top: 0.5rem;
 }
 
 /* ============================================
@@ -995,6 +992,134 @@ a.fb-crumb:hover {
     margin-bottom: 4px;
 }
 
+/* ---- Inline rename ---- */
+
+.fb-rename-inline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
+
+.fb-rename-input {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    font-weight: 500;
+    color: var(--se-text);
+    border: 1px solid var(--se-primary);
+    border-radius: 4px;
+    outline: none;
+    background: var(--se-surface);
+    box-shadow: 0 0 0 2px var(--se-primary-light);
+}
+
+.fb-rename-input-grid {
+    width: 100%;
+}
+
+.fb-rename-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+/* ---- Context menu ---- */
+
+.ctx-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+}
+
+.ctx-menu {
+    position: fixed;
+    z-index: 401;
+    min-width: 200px;
+    background: var(--se-surface);
+    border: 1px solid var(--se-border);
+    border-radius: var(--se-radius);
+    box-shadow: var(--se-shadow-lg);
+    padding: 4px 0;
+    animation: ctx-fade-in 100ms ease;
+}
+
+@keyframes ctx-fade-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.ctx-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--se-text);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background var(--se-transition);
+    text-decoration: none;
+}
+
+a.ctx-item {
+    color: var(--se-text);
+}
+
+a.ctx-item:hover {
+    color: var(--se-text);
+    text-decoration: none;
+}
+
+.ctx-item:hover {
+    background: var(--se-row-hover);
+}
+
+.ctx-item i {
+    font-size: 1rem;
+    color: var(--se-text-secondary);
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.ctx-item span:first-of-type {
+    flex: 1;
+    text-align: left;
+}
+
+.ctx-shortcut {
+    font-size: 0.72rem;
+    color: var(--se-text-muted);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.ctx-item-danger {
+    color: var(--se-danger);
+}
+
+.ctx-item-danger i {
+    color: var(--se-danger);
+}
+
+.ctx-item-danger:hover {
+    background: var(--se-danger-light);
+}
+
+.ctx-divider {
+    height: 1px;
+    background: var(--se-border-light);
+    margin: 4px 0;
+}
+
 /* ============================================
    FilePreview – Full-screen overlay
    ============================================ */
@@ -1145,217 +1270,121 @@ a.fb-crumb:hover {
 }
 
 /* ============================================
-   Inline rename
+   Reconnect Modal
    ============================================ */
 
-.fb-rename-inline {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    min-width: 0;
-    flex: 1;
+.components-reconnect-first-attempt-visible,
+.components-reconnect-repeated-attempt-visible,
+.components-reconnect-failed-visible,
+.components-pause-visible,
+.components-resume-failed-visible,
+.components-rejoining-animation {
+    display: none;
 }
 
-.fb-rename-input {
-    flex: 1;
-    min-width: 0;
-    padding: 4px 8px;
-    font-size: 0.85rem;
-    font-family: inherit;
-    font-weight: 500;
-    color: var(--se-text);
-    border: 1px solid var(--se-primary);
-    border-radius: 4px;
-    outline: none;
-    background: var(--se-surface);
-    box-shadow: 0 0 0 2px var(--se-primary-light);
+#components-reconnect-modal.components-reconnect-show .components-reconnect-first-attempt-visible,
+#components-reconnect-modal.components-reconnect-show .components-rejoining-animation,
+#components-reconnect-modal.components-reconnect-paused .components-pause-visible,
+#components-reconnect-modal.components-reconnect-resume-failed .components-resume-failed-visible,
+#components-reconnect-modal.components-reconnect-retrying,
+#components-reconnect-modal.components-reconnect-retrying .components-reconnect-repeated-attempt-visible,
+#components-reconnect-modal.components-reconnect-retrying .components-rejoining-animation,
+#components-reconnect-modal.components-reconnect-failed,
+#components-reconnect-modal.components-reconnect-failed .components-reconnect-failed-visible {
+    display: block;
 }
-
-.fb-rename-input-grid {
-    width: 100%;
-}
-
-.fb-rename-btn {
-    width: 28px;
-    height: 28px;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-}
-
-/* ============================================
-   Context menu
-   ============================================ */
-
-.ctx-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 400;
-}
-
-.ctx-menu {
-    position: fixed;
-    z-index: 401;
-    min-width: 200px;
-    background: var(--se-surface);
-    border: 1px solid var(--se-border);
-    border-radius: var(--se-radius);
-    box-shadow: var(--se-shadow-lg);
-    padding: 4px 0;
-    animation: ctx-fade-in 100ms ease;
-}
-
-@keyframes ctx-fade-in {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.ctx-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 8px 14px;
-    font-size: 0.85rem;
-    font-family: inherit;
-    color: var(--se-text);
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: background var(--se-transition);
-    text-decoration: none;
-}
-
-a.ctx-item {
-    color: var(--se-text);
-}
-
-a.ctx-item:hover {
-    color: var(--se-text);
-    text-decoration: none;
-}
-
-.ctx-item:hover {
-    background: var(--se-row-hover);
-}
-
-.ctx-item i {
-    font-size: 1rem;
-    color: var(--se-text-secondary);
-    width: 18px;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-.ctx-item span:first-of-type {
-    flex: 1;
-    text-align: left;
-}
-
-.ctx-shortcut {
-    font-size: 0.72rem;
-    color: var(--se-text-muted);
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-.ctx-item-danger {
-    color: var(--se-danger);
-}
-
-.ctx-item-danger i {
-    color: var(--se-danger);
-}
-
-.ctx-item-danger:hover {
-    background: var(--se-danger-light);
-}
-
-.ctx-divider {
-    height: 1px;
-    background: var(--se-border-light);
-    margin: 4px 0;
-}
-
-/* ============================================
-   Reconnect modal (Blazor Server)
-   ============================================ */
 
 #components-reconnect-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(3px);
-    align-items: center;
-    justify-content: center;
+    background-color: white;
+    width: 20rem;
+    margin: 20vh auto;
+    padding: 2rem;
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 3px 6px 2px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: display 0.5s allow-discrete, overlay 0.5s allow-discrete;
+    animation: components-reconnect-modal-fadeOutOpacity 0.5s both;
 }
 
-#components-reconnect-modal.show {
+#components-reconnect-modal[open] {
+    animation: components-reconnect-modal-slideUp 1.5s cubic-bezier(.05, .89, .25, 1.02) 0.3s,
+               components-reconnect-modal-fadeInOpacity 0.5s ease-in-out 0.3s;
+    animation-fill-mode: both;
+}
+
+#components-reconnect-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+    animation: components-reconnect-modal-fadeInOpacity 0.5s ease-in-out;
+    opacity: 1;
+}
+
+@keyframes components-reconnect-modal-slideUp {
+    0% { transform: translateY(30px) scale(0.95); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes components-reconnect-modal-fadeInOpacity {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes components-reconnect-modal-fadeOutOpacity {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.components-reconnect-container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
-#components-reconnect-modal .reconnect-content {
-    background: var(--se-surface);
-    border-radius: var(--se-radius-lg);
-    box-shadow: var(--se-shadow-lg);
-    padding: 32px 40px;
+#components-reconnect-modal p {
+    margin: 0;
     text-align: center;
-    max-width: 380px;
-    width: 90vw;
-}
-
-#components-reconnect-modal .reconnect-icon {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 16px;
-    border-radius: 50%;
-    background: var(--se-primary-light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: var(--se-primary);
-}
-
-#components-reconnect-modal .reconnect-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0 0 8px;
-    color: var(--se-text);
-}
-
-#components-reconnect-modal .reconnect-message {
-    font-size: 0.85rem;
-    color: var(--se-text-secondary);
-    margin: 0 0 20px;
-}
-
-#components-reconnect-modal .reconnect-spinner {
-    display: inline-block;
-    width: 1.5rem;
-    height: 1.5rem;
-    border: 2px solid var(--se-border);
-    border-top-color: var(--se-primary);
-    border-radius: 50%;
-    animation: se-spin 0.6s linear infinite;
-    margin-bottom: 12px;
 }
 
 #components-reconnect-modal button {
-    padding: 8px 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #fff;
-    background: var(--se-primary);
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background var(--se-transition);
+    border: 0;
+    background-color: #6b9ed2;
+    color: white;
+    padding: 4px 24px;
+    border-radius: 4px;
 }
 
 #components-reconnect-modal button:hover {
-    background: var(--se-primary-hover);
+    background-color: #3b6ea2;
+}
+
+#components-reconnect-modal button:active {
+    background-color: #6b9ed2;
+}
+
+.components-rejoining-animation {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.components-rejoining-animation div {
+    position: absolute;
+    border: 3px solid #0087ff;
+    opacity: 1;
+    border-radius: 50%;
+    animation: components-rejoining-animation 1.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.components-rejoining-animation div:nth-child(2) {
+    animation-delay: -0.5s;
+}
+
+@keyframes components-rejoining-animation {
+    0% { top: 40px; left: 40px; width: 0; height: 0; opacity: 0; }
+    4.9% { top: 40px; left: 40px; width: 0; height: 0; opacity: 0; }
+    5% { top: 40px; left: 40px; width: 0; height: 0; opacity: 1; }
+    100% { top: 0; left: 0; width: 80px; height: 80px; opacity: 0; }
 }
 
 /* ============================================

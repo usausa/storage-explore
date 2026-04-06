@@ -2,27 +2,44 @@ namespace StorageExplore.Components.Layout;
 
 using Microsoft.AspNetCore.Components;
 
-using StorageExplore.Helpers;
 using StorageExplore.Services;
+
+using static StorageExplore.Helpers.FileHelper;
 
 public partial class MainLayout
 {
+    //--------------------------------------------------------------------------------
+    // Parameter
+    //--------------------------------------------------------------------------------
+
     [Inject]
     public FileStorageService Storage { get; set; } = default!;
 
     [Inject]
     public NavigationManager Navigation { get; set; } = default!;
 
+    //--------------------------------------------------------------------------------
+    // State
+    //--------------------------------------------------------------------------------
+
     private string CurrentBucket { get; set; } = string.Empty;
     private IReadOnlyList<string> BucketNames { get; set; } = [];
     private long TotalBytes { get; set; }
     private long FreeBytes { get; set; }
 
-    private string TotalFormatted => FileHelper.FormatBytes(TotalBytes);
-    private string UsedFormatted => FileHelper.FormatBytes(TotalBytes - FreeBytes);
+    //--------------------------------------------------------------------------------
+    // Data
+    //--------------------------------------------------------------------------------
+
+    private string TotalFormatted => FormatBytes(TotalBytes);
+    private string UsedFormatted => FormatBytes(TotalBytes - FreeBytes);
     private int UsagePercent => TotalBytes > 0 ? (int)(100.0 * (TotalBytes - FreeBytes) / TotalBytes) : 0;
 
     private EventCallback<string> OnBucketChangedCallback => EventCallback.Factory.Create<string>(this, OnBucketChangedFromChild);
+
+    //--------------------------------------------------------------------------------
+    // Lifecycle
+    //--------------------------------------------------------------------------------
 
     protected override void OnInitialized()
     {
@@ -33,6 +50,10 @@ public partial class MainLayout
             UpdateStorageInfo();
         }
     }
+
+    //--------------------------------------------------------------------------------
+    // Action
+    //--------------------------------------------------------------------------------
 
     private void OnBucketChanged(ChangeEventArgs e)
     {
@@ -54,6 +75,10 @@ public partial class MainLayout
             StateHasChanged();
         }
     }
+
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
 
     private void UpdateStorageInfo()
     {

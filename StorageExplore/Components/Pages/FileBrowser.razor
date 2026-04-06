@@ -80,7 +80,7 @@
                 <div class="fb-upload-current-file" title="@uploadCurrentFile">@uploadCurrentFile</div>
             }
             <div class="fb-upload-bytes">
-                @(FileHelper.FormatBytes(uploadedBytes)) / @(FileHelper.FormatBytes(uploadTotalBytes))
+                @(FormatBytes(uploadedBytes)) / @(FormatBytes(uploadTotalBytes))
                 @if (uploadTotalBytes > 0)
                 {
                     <span>(@((int)(100.0 * uploadedBytes / uploadTotalBytes))%)</span>

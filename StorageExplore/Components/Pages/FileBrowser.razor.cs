@@ -4,31 +4,22 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
-using StorageExplore.Helpers;
 using StorageExplore.Models;
 using StorageExplore.Services;
 
+using static StorageExplore.Helpers.FileHelper;
+
 public partial class FileBrowser : IAsyncDisposable
 {
-    [Parameter]
-    public string? Path { get; set; }
-
-    [CascadingParameter(Name = "Bucket")]
-    public string Bucket { get; set; } = string.Empty;
-
-    [Inject]
-    public FileStorageService Storage { get; set; } = default!;
-
-    [Inject]
-    public NavigationManager Navigation { get; set; } = default!;
-
-    [Inject]
-    public IJSRuntime JS { get; set; } = default!;
-
     private List<FileItem> items = [];
     private FileItem? selectedItem;
     private FileItem? previewItem;
     private bool isLoading;
+    private ViewMode viewMode = ViewMode.List;
+    private SortField sortField = SortField.Name;
+    private bool sortDescending;
+
+    // Upload state
     private bool isUploading;
     private int uploadedCount;
     private int uploadTotalCount;
@@ -36,12 +27,13 @@ public partial class FileBrowser : IAsyncDisposable
     private long uploadTotalBytes;
     private string uploadCurrentFile = string.Empty;
     private string? uploadError;
+
+    // New folder state
     private bool showNewFolder;
     private string newFolderName = string.Empty;
+
+    // Delete state
     private bool showDeleteConfirm;
-    private ViewMode viewMode = ViewMode.List;
-    private SortField sortField = SortField.Name;
-    private bool sortDescending;
 
     // Rename state
     private FileItem? renamingItem;
@@ -59,6 +51,7 @@ public partial class FileBrowser : IAsyncDisposable
     private List<string> overwriteFileNames = [];
     private TaskCompletionSource<bool>? overwriteTcs;
 
+    // JS interop
     private ElementReference dropZoneRef;
     private ElementReference fileInputRef;
     private IJSObjectReference? jsModule;
@@ -66,6 +59,39 @@ public partial class FileBrowser : IAsyncDisposable
 
     private string previousBucket = string.Empty;
     private bool isInitialized;
+
+    //--------------------------------------------------------------------------------
+    // Parameter
+    //--------------------------------------------------------------------------------
+
+    [Parameter]
+    public string? Path { get; set; }
+
+    [CascadingParameter(Name = "Bucket")]
+    public string Bucket { get; set; } = string.Empty;
+
+    [Inject]
+    public FileStorageService Storage { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    public IJSRuntime JS { get; set; } = default!;
+
+    //--------------------------------------------------------------------------------
+    // Lifecycle
+    //--------------------------------------------------------------------------------
+
+    public ValueTask DisposeAsync()
+    {
+        dotNetRef?.Dispose();
+        if (jsModule is not null)
+        {
+            return jsModule.DisposeAsync();
+        }
+        return ValueTask.CompletedTask;
+    }
 
     protected override Task OnParametersSetAsync()
     {
@@ -93,6 +119,10 @@ public partial class FileBrowser : IAsyncDisposable
         }
     }
 
+    //--------------------------------------------------------------------------------
+    // Load
+    //--------------------------------------------------------------------------------
+
     private async Task LoadItems()
     {
         isLoading = true;
@@ -108,6 +138,10 @@ public partial class FileBrowser : IAsyncDisposable
             isLoading = false;
         }
     }
+
+    //--------------------------------------------------------------------------------
+    // Navigation
+    //--------------------------------------------------------------------------------
 
     private void NavigateTo(string path)
     {
@@ -127,6 +161,10 @@ public partial class FileBrowser : IAsyncDisposable
         var parentPath = lastSlash > 0 ? Path[..lastSlash] : string.Empty;
         NavigateTo(parentPath);
     }
+
+    //--------------------------------------------------------------------------------
+    // Selection & Preview
+    //--------------------------------------------------------------------------------
 
     private void SelectItem(FileItem item)
     {
@@ -153,21 +191,14 @@ public partial class FileBrowser : IAsyncDisposable
         }
     }
 
-    private void DeleteItem(FileItem item)
-    {
-        selectedItem = item;
-        showDeleteConfirm = true;
-    }
-
     private void ClosePreview()
     {
         previewItem = null;
     }
 
-    private void ShowUploadDialog()
-    {
-        JS.InvokeVoidAsync("eval", "document.querySelector('.fb input[type=file]').click()");
-    }
+    //--------------------------------------------------------------------------------
+    // New folder
+    //--------------------------------------------------------------------------------
 
     private void ShowNewFolderDialog()
     {
@@ -202,6 +233,16 @@ public partial class FileBrowser : IAsyncDisposable
         return Task.CompletedTask;
     }
 
+    //--------------------------------------------------------------------------------
+    // Delete
+    //--------------------------------------------------------------------------------
+
+    private void DeleteItem(FileItem item)
+    {
+        selectedItem = item;
+        showDeleteConfirm = true;
+    }
+
     private void DeleteSelected()
     {
         if (selectedItem is null)
@@ -224,7 +265,9 @@ public partial class FileBrowser : IAsyncDisposable
         return LoadItems();
     }
 
-    // ---- Rename ----
+    //--------------------------------------------------------------------------------
+    // Rename
+    //--------------------------------------------------------------------------------
 
     private void StartRename(FileItem item)
     {
@@ -279,7 +322,9 @@ public partial class FileBrowser : IAsyncDisposable
         return Task.CompletedTask;
     }
 
-    // ---- Context menu ----
+    //--------------------------------------------------------------------------------
+    // Context menu
+    //--------------------------------------------------------------------------------
 
     private void OnContextMenu(MouseEventArgs e, FileItem item)
     {
@@ -337,17 +382,114 @@ public partial class FileBrowser : IAsyncDisposable
         showDeleteConfirm = true;
     }
 
+    //--------------------------------------------------------------------------------
+    // Upload
+    //--------------------------------------------------------------------------------
+
+    private void ShowUploadDialog()
+    {
+        JS.InvokeVoidAsync("eval", "document.querySelector('.fb input[type=file]').click()");
+    }
+
+    [JSInvokable]
+    public string GetCurrentPath() => Path ?? string.Empty;
+
+    [JSInvokable]
+    public string GetCurrentBucket() => Bucket;
+
+    [JSInvokable]
+    public void OnUploadStarted(int totalCount, long totalBytes)
+    {
+        isUploading = true;
+        uploadedCount = 0;
+        uploadTotalCount = totalCount;
+        uploadedBytes = 0;
+        uploadTotalBytes = totalBytes;
+        uploadCurrentFile = string.Empty;
+        uploadError = null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public void OnUploadByteProgress(int completedFiles, int totalFiles, long completedBytes, long totalBytes, string currentFile)
+    {
+        uploadedCount = completedFiles;
+        uploadTotalCount = totalFiles;
+        uploadedBytes = completedBytes;
+        uploadTotalBytes = totalBytes;
+        uploadCurrentFile = currentFile;
+        InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public async Task OnUploadCompleted()
+    {
+        isUploading = false;
+        uploadCurrentFile = string.Empty;
+        await LoadItems();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public void OnUploadError(string error)
+    {
+        uploadError = error;
+        InvokeAsync(StateHasChanged);
+    }
+
+    //--------------------------------------------------------------------------------
+    // Overwrite confirmation
+    //--------------------------------------------------------------------------------
+
+    [JSInvokable]
+    public async Task<bool> CheckDuplicates(string[] fileNames)
+    {
+        var existingNames = items
+            .Where(i => !i.IsDirectory)
+            .Select(i => i.Name)
+            .ToHashSet(StringComparer.Ordinal);
+
+        var duplicates = fileNames.Where(existingNames.Contains).ToList();
+        if (duplicates.Count == 0)
+        {
+            return true;
+        }
+
+        overwriteFileNames = duplicates;
+        showOverwriteConfirm = true;
+        overwriteTcs = new TaskCompletionSource<bool>();
+        StateHasChanged();
+
+        return await overwriteTcs.Task;
+    }
+
+    private void ConfirmOverwrite()
+    {
+        showOverwriteConfirm = false;
+        overwriteTcs?.TrySetResult(true);
+    }
+
+    private void CancelOverwrite()
+    {
+        showOverwriteConfirm = false;
+        overwriteTcs?.TrySetResult(false);
+    }
+
+    //--------------------------------------------------------------------------------
+    // Data
+    //--------------------------------------------------------------------------------
+
     private string GetDownloadUrl(FileItem item)
     {
-        return $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(item.RelativePath)}";
+        return $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(item.RelativePath)}";
     }
 
     private string GetThumbnailUrl(FileItem item)
     {
-        return $"/api/files/thumbnail/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(item.RelativePath)}?t={item.LastModified.Ticks}";
+        return $"/api/files/thumbnail/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(item.RelativePath)}?t={item.LastModified.Ticks}";
     }
 
-    private static bool IsImageFile(FileItem item) => FileHelper.HasThumbnail(item.Extension);
+    private static bool IsImageFile(FileItem item) => HasThumbnail(item.Extension);
 
     private List<Breadcrumb> GetBreadcrumbs()
     {
@@ -422,95 +564,9 @@ public partial class FileBrowser : IAsyncDisposable
             : "<i class=\"bi bi-chevron-up\" style=\"font-size:0.7rem\"></i>");
     }
 
-    [JSInvokable]
-    public string GetCurrentPath() => Path ?? string.Empty;
-
-    [JSInvokable]
-    public string GetCurrentBucket() => Bucket;
-
-    [JSInvokable]
-    public async Task<bool> CheckDuplicates(string[] fileNames)
-    {
-        var existingNames = items
-            .Where(i => !i.IsDirectory)
-            .Select(i => i.Name)
-            .ToHashSet(StringComparer.Ordinal);
-
-        var duplicates = fileNames.Where(existingNames.Contains).ToList();
-        if (duplicates.Count == 0)
-        {
-            return true;
-        }
-
-        overwriteFileNames = duplicates;
-        showOverwriteConfirm = true;
-        overwriteTcs = new TaskCompletionSource<bool>();
-        StateHasChanged();
-
-        return await overwriteTcs.Task;
-    }
-
-    private void ConfirmOverwrite()
-    {
-        showOverwriteConfirm = false;
-        overwriteTcs?.TrySetResult(true);
-    }
-
-    private void CancelOverwrite()
-    {
-        showOverwriteConfirm = false;
-        overwriteTcs?.TrySetResult(false);
-    }
-
-    [JSInvokable]
-    public void OnUploadStarted(int totalCount, long totalBytes)
-    {
-        isUploading = true;
-        uploadedCount = 0;
-        uploadTotalCount = totalCount;
-        uploadedBytes = 0;
-        uploadTotalBytes = totalBytes;
-        uploadCurrentFile = string.Empty;
-        uploadError = null;
-        InvokeAsync(StateHasChanged);
-    }
-
-    [JSInvokable]
-    public void OnUploadByteProgress(int completedFiles, int totalFiles, long completedBytes, long totalBytes, string currentFile)
-    {
-        uploadedCount = completedFiles;
-        uploadTotalCount = totalFiles;
-        uploadedBytes = completedBytes;
-        uploadTotalBytes = totalBytes;
-        uploadCurrentFile = currentFile;
-        InvokeAsync(StateHasChanged);
-    }
-
-    [JSInvokable]
-    public async Task OnUploadCompleted()
-    {
-        isUploading = false;
-        uploadCurrentFile = string.Empty;
-        await LoadItems();
-        await InvokeAsync(StateHasChanged);
-    }
-
-    [JSInvokable]
-    public void OnUploadError(string error)
-    {
-        uploadError = error;
-        InvokeAsync(StateHasChanged);
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        dotNetRef?.Dispose();
-        if (jsModule is not null)
-        {
-            return jsModule.DisposeAsync();
-        }
-        return ValueTask.CompletedTask;
-    }
+    //--------------------------------------------------------------------------------
+    // Types
+    //--------------------------------------------------------------------------------
 
     private sealed record Breadcrumb
     {

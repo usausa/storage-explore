@@ -2,12 +2,17 @@ namespace StorageExplore.Components.Pages;
 
 using Microsoft.AspNetCore.Components;
 
-using StorageExplore.Helpers;
 using StorageExplore.Models;
 using StorageExplore.Services;
 
+using static StorageExplore.Helpers.FileHelper;
+
 public partial class FilePreview
 {
+    //--------------------------------------------------------------------------------
+    // Parameter
+    //--------------------------------------------------------------------------------
+
     [Parameter]
     [EditorRequired]
     public required FileItem Item { get; set; }
@@ -23,16 +28,28 @@ public partial class FilePreview
     [Inject]
     public FileStorageService Storage { get; set; } = default!;
 
+    //--------------------------------------------------------------------------------
+    // State
+    //--------------------------------------------------------------------------------
+
     private string? textContent;
 
-    private string PreviewUrl => $"/api/files/preview/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(Item.RelativePath)}";
-    private string DownloadUrl => $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{FileHelper.EncodePathSegments(Item.RelativePath)}";
+    //--------------------------------------------------------------------------------
+    // Data
+    //--------------------------------------------------------------------------------
 
-    private bool IsImage => FileHelper.IsImage(Item.Extension);
-    private bool IsVideo => FileHelper.IsVideo(Item.Extension);
-    private bool IsAudio => FileHelper.IsAudio(Item.Extension);
-    private bool IsPdf => FileHelper.IsPdf(Item.Extension);
-    private bool IsText => FileHelper.IsText(Item.Extension);
+    private string PreviewUrl => $"/api/files/preview/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(Item.RelativePath)}";
+    private string DownloadUrl => $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(Item.RelativePath)}";
+
+    private bool IsImage => IsImageExt(Item.Extension);
+    private bool IsVideo => IsVideoExt(Item.Extension);
+    private bool IsAudio => IsAudioExt(Item.Extension);
+    private bool IsPdf => IsPdfExt(Item.Extension);
+    private bool IsText => IsTextExt(Item.Extension);
+
+    //--------------------------------------------------------------------------------
+    // Lifecycle
+    //--------------------------------------------------------------------------------
 
     protected override async Task OnParametersSetAsync()
     {

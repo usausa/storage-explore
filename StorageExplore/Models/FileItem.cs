@@ -1,6 +1,6 @@
 namespace StorageExplore.Models;
 
-using StorageExplore.Helpers;
+using static StorageExplore.Helpers.FileHelper;
 
 public sealed class FileItem
 {
@@ -11,8 +11,8 @@ public sealed class FileItem
     public DateTime LastModified { get; set; }
     public string Extension => IsDirectory ? string.Empty : Path.GetExtension(Name).ToLowerInvariant();
 
-    public string FormattedSize => IsDirectory ? string.Empty : FileHelper.FormatBytes(Size);
-    public string IconCss => FileHelper.GetIconCss(Extension, IsDirectory);
-    public bool IsPreviewable => !IsDirectory && FileHelper.IsPreviewable(Extension);
-    public string ContentType => FileHelper.GetContentType(Extension);
+    public string FormattedSize => IsDirectory ? string.Empty : FormatBytes(Size);
+    public string IconCss => GetIconCss(Extension, IsDirectory);
+    public bool IsPreviewable => !IsDirectory && IsPreviewable(Extension);
+    public string ContentType => GetContentType(Extension);
 }
