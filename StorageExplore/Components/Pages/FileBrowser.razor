@@ -405,7 +405,7 @@
 <!-- Preview modal -->
 @if (previewItem is not null)
 {
-    <FilePreview Item="previewItem" Bucket="@Bucket" OnClose="ClosePreview" />
+    <FilePreview Bucket="@Bucket" Item="previewItem" OnClose="ClosePreview" />
 }
 
 <!-- Upload overwrite confirmation -->

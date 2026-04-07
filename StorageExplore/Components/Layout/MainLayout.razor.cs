@@ -7,16 +7,6 @@ using StorageExplore.Services;
 public partial class MainLayout
 {
     //--------------------------------------------------------------------------------
-    // Parameter
-    //--------------------------------------------------------------------------------
-
-    [Inject]
-    public FileStorageService Storage { get; set; } = default!;
-
-    [Inject]
-    public NavigationManager Navigation { get; set; } = default!;
-
-    //--------------------------------------------------------------------------------
     // State
     //--------------------------------------------------------------------------------
 
@@ -30,9 +20,20 @@ public partial class MainLayout
     //--------------------------------------------------------------------------------
 
     private long UsedBytes => TotalBytes - FreeBytes;
+
     private int UsagePercent => TotalBytes > 0 ? (int)(100.0 * UsedBytes / TotalBytes) : 0;
 
     private EventCallback<string> OnBucketChangedCallback => EventCallback.Factory.Create<string>(this, OnBucketChangedFromChild);
+
+    //--------------------------------------------------------------------------------
+    // Parameter
+    //--------------------------------------------------------------------------------
+
+    [Inject]
+    public FileStorageService Storage { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
 
     //--------------------------------------------------------------------------------
     // Lifecycle

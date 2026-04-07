@@ -5,7 +5,9 @@ namespace StorageExplore.Helpers;
 /// </summary>
 public static class MediaHelper
 {
-    // ---- Extension sets ----
+    //--------------------------------------------------------------------------------
+    // Extension set
+    //--------------------------------------------------------------------------------
 
     private static readonly HashSet<string> ImageExtensions =
         [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico"];
@@ -29,17 +31,27 @@ public static class MediaHelper
     private static readonly HashSet<string> PreviewTextExtensions =
         [".txt", ".log", ".md", ".csv", ".json", ".xml"];
 
-    // ---- Type checks ----
+    //--------------------------------------------------------------------------------
+    // Type check
+    //--------------------------------------------------------------------------------
 
     public static bool IsImageFile(string extension) => ImageExtensions.Contains(extension);
+
     public static bool IsVideoFile(string extension) => VideoExtensions.Contains(extension);
+
     public static bool IsAudioFile(string extension) => AudioExtensions.Contains(extension);
+
     public static bool IsPdfFile(string extension) => extension == ".pdf";
+
     public static bool IsTextFile(string extension) => PreviewTextExtensions.Contains(extension);
+
     public static bool IsPreviewable(string extension) => PreviewableExtensions.Contains(extension);
+
     public static bool HasThumbnail(string extension) => ThumbnailExtensions.Contains(extension);
 
-    // ---- Content-Type mapping ----
+    //--------------------------------------------------------------------------------
+    // Content-Type mapping
+    //--------------------------------------------------------------------------------
 
     public static string GetContentType(string extension) => extension switch
     {

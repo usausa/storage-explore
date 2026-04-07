@@ -9,12 +9,14 @@ using StorageExplore.Services;
 public partial class FilePreview
 {
     //--------------------------------------------------------------------------------
-    // Parameter
+    // State
     //--------------------------------------------------------------------------------
 
-    [Parameter]
-    [EditorRequired]
-    public required FileItem Item { get; set; }
+    private string? textContent;
+
+    //--------------------------------------------------------------------------------
+    // Parameter
+    //--------------------------------------------------------------------------------
 
     [Parameter]
     [EditorRequired]
@@ -22,16 +24,14 @@ public partial class FilePreview
 
     [Parameter]
     [EditorRequired]
+    public required FileItem Item { get; set; }
+
+    [Parameter]
+    [EditorRequired]
     public required EventCallback OnClose { get; set; }
 
     [Inject]
     public FileStorageService Storage { get; set; } = default!;
-
-    //--------------------------------------------------------------------------------
-    // State
-    //--------------------------------------------------------------------------------
-
-    private string? textContent;
 
     //--------------------------------------------------------------------------------
     // Lifecycle

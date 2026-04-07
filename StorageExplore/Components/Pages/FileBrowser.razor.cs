@@ -10,6 +10,10 @@ using StorageExplore.Services;
 
 public partial class FileBrowser : IAsyncDisposable
 {
+    //--------------------------------------------------------------------------------
+    // State
+    //--------------------------------------------------------------------------------
+
     private List<FileItem> items = [];
     private FileItem? selectedItem;
     private FileItem? previewItem;
@@ -226,7 +230,7 @@ public partial class FileBrowser : IAsyncDisposable
         {
             return CreateFolder();
         }
-        else if (e.Key == "Escape")
+        if (e.Key == "Escape")
         {
             showNewFolder = false;
         }
@@ -315,7 +319,7 @@ public partial class FileBrowser : IAsyncDisposable
         {
             return ConfirmRename();
         }
-        else if (e.Key == "Escape")
+        if (e.Key == "Escape")
         {
             CancelRename();
         }
@@ -560,13 +564,13 @@ public partial class FileBrowser : IAsyncDisposable
     private enum ViewMode
     {
         List,
-        Grid,
+        Grid
     }
 
     private enum SortField
     {
         Name,
         Size,
-        Modified,
+        Modified
     }
 }

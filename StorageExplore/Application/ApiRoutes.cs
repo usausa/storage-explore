@@ -1,8 +1,5 @@
 namespace StorageExplore.Application;
 
-/// <summary>
-/// Builds API endpoint URLs for file operations.
-/// </summary>
 public static class ApiRoutes
 {
     public static string Download(string bucket, string path) =>

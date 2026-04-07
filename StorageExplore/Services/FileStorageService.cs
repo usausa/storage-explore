@@ -7,13 +7,16 @@ using StorageExplore.Models;
 #pragma warning disable CA3003
 public sealed class FileStorageService
 {
-    private readonly FileStorageSetting settings;
     private readonly ILogger<FileStorageService> log;
 
-    public FileStorageService(IOptions<FileStorageSetting> options, ILogger<FileStorageService> log)
+    private readonly FileStorageSetting settings;
+
+    public IReadOnlyDictionary<string, string> Buckets => settings.Buckets;
+
+    public FileStorageService(ILogger<FileStorageService> log, IOptions<FileStorageSetting> options)
     {
-        settings = options.Value;
         this.log = log;
+        settings = options.Value;
 
         foreach (var (name, path) in settings.Buckets)
         {
@@ -25,17 +28,11 @@ public sealed class FileStorageService
         }
     }
 
-    public IReadOnlyDictionary<string, string> Buckets => settings.Buckets;
-
     public string? GetBucketPath(string bucketName)
     {
         return settings.Buckets.GetValueOrDefault(bucketName);
     }
 
-    /// <summary>
-    /// Resolves a relative path within a bucket to a safe absolute path.
-    /// Returns null if the bucket does not exist or the path escapes the root.
-    /// </summary>
     public string? ResolvePath(string bucketName, string relativePath)
     {
         var bucketPath = GetBucketPath(bucketName);
@@ -195,10 +192,6 @@ public sealed class FileStorageService
         }
     }
 
-    /// <summary>
-    /// Renames a file or directory. The newName must be a simple name (no path separators).
-    /// Returns the new relative path on success, or null on failure.
-    /// </summary>
     public string? Rename(string bucketName, string relativePath, string newName)
     {
         if (String.IsNullOrWhiteSpace(newName) || newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
@@ -258,9 +251,6 @@ public sealed class FileStorageService
         return File.Exists(fullPath) || Directory.Exists(fullPath);
     }
 
-    /// <summary>
-    /// Gets the storage usage information for a bucket.
-    /// </summary>
     public (long TotalBytes, long FreeBytes) GetStorageInfo(string bucketName)
     {
         var bucketPath = GetBucketPath(bucketName);
