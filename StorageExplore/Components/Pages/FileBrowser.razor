@@ -250,7 +250,7 @@
                                     @item.Name
                                 }
                             </div>
-                            <div class="fb-col-size">@item.FormatSize()</div>
+                            <div class="fb-col-size">@FormatSize(item)</div>
                             <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm")</div>
                             <div class="fb-col-actions">
                                 <button class="btn-se-icon" title="Rename"
@@ -352,7 +352,7 @@
                                 else
                                 {
                                     <div class="fb-card-name" title="@item.Name">@item.Name</div>
-                                    <div class="fb-card-meta">@item.FormatSize()</div>
+                                    <div class="fb-card-meta">@FormatSize(item)</div>
                                 }
                             </div>
                         </div>

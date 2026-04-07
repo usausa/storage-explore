@@ -30,6 +30,9 @@ public static class ViewHelper
         _ => $"{bytes / (1024.0 * 1024 * 1024 * 1024):F2} TB"
     };
 
+    public static string FormatSize(FileItem item) =>
+        item.IsDirectory ? string.Empty : FormatBytes(item.Size);
+
     // ---- Icon CSS ----
 
     private static readonly HashSet<string> ArchiveExtensions =

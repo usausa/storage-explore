@@ -78,7 +78,8 @@ app.MapRazorComponents<App>()
 // Startup log
 app.Logger.InfoServiceStart();
 app.Logger.InfoServiceSettingsRuntime(RuntimeInformation.OSDescription, RuntimeInformation.FrameworkDescription, RuntimeInformation.RuntimeIdentifier);
-app.Logger.InfoServiceSettingsEnvironment(typeof(Program).Assembly.GetName().Version, Environment.CurrentDirectory);
+var serviceVersion = typeof(Program).Assembly.GetName().Version;
+app.Logger.InfoServiceSettingsEnvironment(serviceVersion, Environment.CurrentDirectory);
 app.Logger.InfoServiceSettingsGC(GCSettings.IsServerGC, GCSettings.LatencyMode, GCSettings.LargeObjectHeapCompactionMode);
 
 app.Run();

@@ -22,9 +22,9 @@
         <div class="header-right">
             <div class="storage-info">
                 <div class="storage-info-text">
-                    <span>@UsedFormatted used</span>
+                    <span>@FormatBytes(UsedBytes) used</span>
                     <span class="storage-info-sep">/</span>
-                    <span>@TotalFormatted total</span>
+                    <span>@FormatBytes(TotalBytes) total</span>
                 </div>
                 <div class="storage-bar">
                     <div class="storage-bar-fill" style="width: @UsagePercent%"></div>

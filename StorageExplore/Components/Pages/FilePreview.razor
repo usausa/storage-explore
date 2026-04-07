@@ -4,7 +4,7 @@
         <div class="fp-header-info">
             <i class="bi @GetIconCss(Item)"></i>
             <span class="fp-filename">@Item.Name</span>
-            <span class="fp-filesize">@Item.FormatSize()</span>
+            <span class="fp-filesize">@FormatSize(Item)</span>
         </div>
         <div class="fp-header-actions">
             <a class="btn-se-icon" href="@ApiRoutes.Download(Bucket, Item.RelativePath)" target="_blank" title="Download">
