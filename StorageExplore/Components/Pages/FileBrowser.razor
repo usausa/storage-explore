@@ -116,7 +116,8 @@
     {
         <div class="fb-new-folder">
             <i class="bi bi-folder-plus" style="color: var(--se-primary); font-size: 1.1rem;"></i>
-            <input type="text" class="fb-new-folder-input" placeholder="Folder name" autofocus
+            <input type="text" class="fb-new-folder-input" placeholder="Folder name"
+                   @ref="newFolderInputRef"
                    @bind="newFolderName" @bind:event="oninput" @onkeydown="OnNewFolderKeyDown" />
             <button class="btn-se-primary" style="padding: 5px 14px;" @onclick="CreateFolder">Create</button>
             <button class="btn-se-ghost" style="padding: 5px 12px;" @onclick="() => showNewFolder = false">Cancel</button>

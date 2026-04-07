@@ -34,6 +34,8 @@ public partial class FileBrowser : IAsyncDisposable
     // New folder state
     private bool showNewFolder;
     private string newFolderName = string.Empty;
+    private ElementReference newFolderInputRef;
+    private bool focusNewFolderInput;
 
     // Delete state
     private bool showDeleteConfirm;
@@ -120,6 +122,12 @@ public partial class FileBrowser : IAsyncDisposable
             dotNetRef = DotNetObjectReference.Create(this);
             jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/fileUpload.js");
             await jsModule.InvokeVoidAsync("initDropZone", dropZoneRef, fileInputRef, dotNetRef);
+        }
+
+        if (focusNewFolderInput)
+        {
+            focusNewFolderInput = false;
+            await newFolderInputRef.FocusAsync();
         }
     }
 
@@ -208,6 +216,7 @@ public partial class FileBrowser : IAsyncDisposable
     {
         newFolderName = string.Empty;
         showNewFolder = true;
+        focusNewFolderInput = true;
     }
 
     private Task CreateFolder()
