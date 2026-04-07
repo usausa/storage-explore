@@ -1,4 +1,4 @@
-# StorageExplore
+# Storage Explore
 
 Browser-based file storage manager for browsing and managing files on a local disk.
 
