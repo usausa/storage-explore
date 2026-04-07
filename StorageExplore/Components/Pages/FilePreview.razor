@@ -16,13 +16,13 @@
         </div>
     </div>
     <div class="fp-body">
-        @if (IsImageExt(Item.Extension))
+        @if (IsImageFile(Item.Extension))
         {
             <div class="fp-center">
                 <img src="@ApiRoutes.Preview(Bucket, Item.RelativePath)" alt="@Item.Name" class="fp-image" />
             </div>
         }
-        else if (IsVideoExt(Item.Extension))
+        else if (IsVideoFile(Item.Extension))
         {
             <div class="fp-center">
                 <video controls class="fp-video" autoplay>
@@ -31,7 +31,7 @@
                 </video>
             </div>
         }
-        else if (IsAudioExt(Item.Extension))
+        else if (IsAudioFile(Item.Extension))
         {
             <div class="fp-center fp-audio-wrap">
                 <div class="fp-audio-icon">
@@ -44,11 +44,11 @@
                 </audio>
             </div>
         }
-        else if (IsPdfExt(Item.Extension))
+        else if (IsPdfFile(Item.Extension))
         {
             <iframe src="@ApiRoutes.Preview(Bucket, Item.RelativePath)" class="fp-pdf"></iframe>
         }
-        else if (IsTextExt(Item.Extension))
+        else if (IsTextFile(Item.Extension))
         {
             <div class="fp-text-wrap">
                 @if (textContent is null)

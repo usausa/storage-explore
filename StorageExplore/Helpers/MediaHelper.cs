@@ -31,24 +31,13 @@ public static class MediaHelper
 
     // ---- Type checks ----
 
-    public static bool IsImageExt(string extension) => ImageExtensions.Contains(extension);
-    public static bool IsVideoExt(string extension) => VideoExtensions.Contains(extension);
-    public static bool IsAudioExt(string extension) => AudioExtensions.Contains(extension);
-    public static bool IsPdfExt(string extension) => extension == ".pdf";
-    public static bool IsTextExt(string extension) => PreviewTextExtensions.Contains(extension);
+    public static bool IsImageFile(string extension) => ImageExtensions.Contains(extension);
+    public static bool IsVideoFile(string extension) => VideoExtensions.Contains(extension);
+    public static bool IsAudioFile(string extension) => AudioExtensions.Contains(extension);
+    public static bool IsPdfFile(string extension) => extension == ".pdf";
+    public static bool IsTextFile(string extension) => PreviewTextExtensions.Contains(extension);
     public static bool IsPreviewable(string extension) => PreviewableExtensions.Contains(extension);
     public static bool HasThumbnail(string extension) => ThumbnailExtensions.Contains(extension);
-
-    // ---- Size formatting ----
-
-    public static string FormatBytes(long bytes) => bytes switch
-    {
-        < 1024 => $"{bytes} B",
-        < 1024 * 1024 => $"{bytes / 1024.0:F1} KB",
-        < 1024L * 1024 * 1024 => $"{bytes / (1024.0 * 1024):F1} MB",
-        < 1024L * 1024 * 1024 * 1024 => $"{bytes / (1024.0 * 1024 * 1024):F1} GB",
-        _ => $"{bytes / (1024.0 * 1024 * 1024 * 1024):F2} TB"
-    };
 
     // ---- Content-Type mapping ----
 

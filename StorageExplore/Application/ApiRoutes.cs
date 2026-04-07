@@ -1,4 +1,4 @@
-namespace StorageExplore.Helpers;
+namespace StorageExplore.Application;
 
 /// <summary>
 /// Builds API endpoint URLs for file operations.
@@ -16,11 +16,11 @@ public static class ApiRoutes
 
     private static string EncodePathSegments(string path)
     {
-        if (string.IsNullOrEmpty(path))
+        if (String.IsNullOrEmpty(path))
         {
             return string.Empty;
         }
 
-        return string.Join('/', path.Split('/').Select(Uri.EscapeDataString));
+        return String.Join('/', path.Split('/').Select(Uri.EscapeDataString));
     }
 }

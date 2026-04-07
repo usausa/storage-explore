@@ -44,7 +44,7 @@ public sealed class FileStorageService
             return null;
         }
 
-        if (string.IsNullOrWhiteSpace(relativePath))
+        if (String.IsNullOrWhiteSpace(relativePath))
         {
             return bucketPath;
         }
@@ -201,7 +201,7 @@ public sealed class FileStorageService
     /// </summary>
     public string? Rename(string bucketName, string relativePath, string newName)
     {
-        if (string.IsNullOrWhiteSpace(newName) || newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+        if (String.IsNullOrWhiteSpace(newName) || newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
         {
             log.WarnInvalidRenameName(newName);
             return null;

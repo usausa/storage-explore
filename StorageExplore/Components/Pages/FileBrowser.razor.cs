@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
-using StorageExplore.Helpers;
+using StorageExplore.Application;
 using StorageExplore.Models;
 using StorageExplore.Services;
 
@@ -147,12 +147,12 @@ public partial class FileBrowser : IAsyncDisposable
     {
         selectedItem = null;
         previewItem = null;
-        Navigation.NavigateTo(string.IsNullOrEmpty(path) ? "/" : $"/browse/{path}");
+        Navigation.NavigateTo(String.IsNullOrEmpty(path) ? "/" : $"/browse/{path}");
     }
 
     private void NavigateUp()
     {
-        if (string.IsNullOrEmpty(Path))
+        if (String.IsNullOrEmpty(Path))
         {
             return;
         }
@@ -208,12 +208,12 @@ public partial class FileBrowser : IAsyncDisposable
 
     private Task CreateFolder()
     {
-        if (string.IsNullOrWhiteSpace(newFolderName))
+        if (String.IsNullOrWhiteSpace(newFolderName))
         {
             return Task.CompletedTask;
         }
 
-        var folderPath = string.IsNullOrEmpty(Path) ? newFolderName : $"{Path}/{newFolderName}";
+        var folderPath = String.IsNullOrEmpty(Path) ? newFolderName : $"{Path}/{newFolderName}";
         Storage.CreateDirectory(Bucket, folderPath);
         showNewFolder = false;
         newFolderName = string.Empty;
@@ -278,7 +278,7 @@ public partial class FileBrowser : IAsyncDisposable
 
     private Task ConfirmRename()
     {
-        if (renamingItem is null || string.IsNullOrWhiteSpace(renameValue))
+        if (renamingItem is null || String.IsNullOrWhiteSpace(renameValue))
         {
             return Task.CompletedTask;
         }

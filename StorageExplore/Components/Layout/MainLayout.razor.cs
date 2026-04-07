@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 using StorageExplore.Services;
 
-using static StorageExplore.Helpers.MediaHelper;
+using static StorageExplore.Application.ViewHelper;
 
 public partial class MainLayout
 {

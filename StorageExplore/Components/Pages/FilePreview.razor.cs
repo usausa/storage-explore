@@ -39,7 +39,7 @@ public partial class FilePreview
 
     protected override async Task OnParametersSetAsync()
     {
-        if (MediaHelper.IsTextExt(Item.Extension))
+        if (MediaHelper.IsTextFile(Item.Extension))
         {
             textContent = await Storage.ReadTextAsync(Bucket, Item.RelativePath);
             textContent ??= string.Empty;

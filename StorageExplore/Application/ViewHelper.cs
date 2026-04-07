@@ -1,7 +1,8 @@
-namespace StorageExplore.Helpers;
+namespace StorageExplore.Application;
 
 using Microsoft.AspNetCore.Components;
 
+using StorageExplore.Helpers;
 using StorageExplore.Models;
 
 /// <summary>
@@ -17,6 +18,17 @@ public static class ViewHelper
                 ? "<i class=\"bi bi-chevron-down\" style=\"font-size:0.7rem\"></i>"
                 : "<i class=\"bi bi-chevron-up\" style=\"font-size:0.7rem\"></i>")
             : new MarkupString(string.Empty);
+
+    // ---- Size formatting ----
+
+    public static string FormatBytes(long bytes) => bytes switch
+    {
+        < 1024 => $"{bytes} B",
+        < 1024 * 1024 => $"{bytes / 1024.0:F1} KB",
+        < 1024L * 1024 * 1024 => $"{bytes / (1024.0 * 1024):F1} MB",
+        < 1024L * 1024 * 1024 * 1024 => $"{bytes / (1024.0 * 1024 * 1024):F1} GB",
+        _ => $"{bytes / (1024.0 * 1024 * 1024 * 1024):F2} TB"
+    };
 
     // ---- Icon CSS ----
 
@@ -37,15 +49,15 @@ public static class ViewHelper
         {
             return "bi-folder-fill text-warning";
         }
-        if (MediaHelper.IsImageExt(ext))
+        if (MediaHelper.IsImageFile(ext))
         {
             return "bi-file-image text-success";
         }
-        if (MediaHelper.IsVideoExt(ext))
+        if (MediaHelper.IsVideoFile(ext))
         {
             return "bi-file-play text-danger";
         }
-        if (MediaHelper.IsAudioExt(ext))
+        if (MediaHelper.IsAudioFile(ext))
         {
             return "bi-file-music text-info";
         }
