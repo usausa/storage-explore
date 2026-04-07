@@ -1,13 +1,28 @@
 namespace StorageExplore;
 
+using System.Runtime;
+using System.Runtime.InteropServices;
+
 internal static partial class Log
 {
     // Startup
 
-    [LoggerMessage(Level = LogLevel.Information, Message = "Bucket directory created. name=[{Name}], path=[{Path}]")]
-    public static partial void InfoBucketDirectoryCreated(this ILogger log, string name, string path);
+    [LoggerMessage(Level = LogLevel.Information, Message = "Service start.")]
+    public static partial void InfoServiceStart(this ILogger log);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Runtime: os=[{OsDescription}], framework=[{FrameworkDescription}], rid=[{RuntimeIdentifier}]")]
+    public static partial void InfoServiceSettingsRuntime(this ILogger log, string osDescription, string frameworkDescription, string runtimeIdentifier);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Environment: version=[{Version}], directory=[{Directory}]")]
+    public static partial void InfoServiceSettingsEnvironment(this ILogger log, Version? version, string directory);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "GCSettings: serverGC=[{IsServerGC}], latencyMode=[{LatencyMode}], largeObjectHeapCompactionMode=[{LargeObjectHeapCompactionMode}]")]
+    public static partial void InfoServiceSettingsGC(this ILogger log, bool isServerGC, GCLatencyMode latencyMode, GCLargeObjectHeapCompactionMode largeObjectHeapCompactionMode);
 
     // Storage
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Bucket directory created. name=[{Name}], path=[{Path}]")]
+    public static partial void InfoBucketDirectoryCreated(this ILogger log, string name, string path);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Path traversal attempt. bucket=[{Bucket}], path=[{Path}]")]
     public static partial void WarnPathTraversal(this ILogger log, string bucket, string path);

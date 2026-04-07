@@ -3,6 +3,7 @@ namespace StorageExplore.Services;
 using Microsoft.Extensions.Options;
 
 using StorageExplore.Models;
+using StorageExplore.Settings;
 
 #pragma warning disable CA3003
 public sealed class FileStorageService

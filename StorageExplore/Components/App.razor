@@ -10,27 +10,16 @@
     <link rel="stylesheet" href="@Assets["css/app.css"]" />
     <link rel="stylesheet" href="@Assets["StorageExplore.styles.css"]" />
     <ImportMap />
+    @* ReSharper disable Html.PathError *@
     <link rel="icon" type="image/png" href="favicon.png" />
+    @* ReSharper restore Html.PathError *@
     <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 
 <body>
     <Routes @rendermode="InteractiveServer" />
-
-    <div id="components-reconnect-modal">
-        <div class="reconnect-content">
-            <div class="reconnect-icon">
-                <i class="bi bi-wifi-off"></i>
-            </div>
-            <div class="reconnect-spinner"></div>
-            <h3 class="reconnect-title">Connection lost</h3>
-            <p class="reconnect-message">Attempting to reconnect to the server...</p>
-            <button onclick="location.reload()">Reload</button>
-        </div>
-    </div>
-
+    <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
-    <script src="@Assets["js/reconnect.js"]"></script>
 </body>
 
 </html>

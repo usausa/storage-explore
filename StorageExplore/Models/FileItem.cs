@@ -1,7 +1,5 @@
 namespace StorageExplore.Models;
 
-using static StorageExplore.Helpers.FileHelper;
-
 public sealed class FileItem
 {
     public required string Name { get; set; }
@@ -12,8 +10,4 @@ public sealed class FileItem
 #pragma warning disable CA1308
     public string Extension => IsDirectory ? string.Empty : Path.GetExtension(Name).ToLowerInvariant();
 #pragma warning restore CA1308
-    public string FormattedSize => IsDirectory ? string.Empty : FormatBytes(Size);
-    public string IconCss => GetIconCss(Extension, IsDirectory);
-    public bool IsPreviewable => !IsDirectory && IsPreviewable(Extension);
-    public string ContentType => GetContentType(Extension);
 }

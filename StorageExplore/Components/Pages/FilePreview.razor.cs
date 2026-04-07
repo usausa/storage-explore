@@ -2,10 +2,9 @@ namespace StorageExplore.Components.Pages;
 
 using Microsoft.AspNetCore.Components;
 
+using StorageExplore.Helpers;
 using StorageExplore.Models;
 using StorageExplore.Services;
-
-using static StorageExplore.Helpers.FileHelper;
 
 public partial class FilePreview
 {
@@ -38,8 +37,8 @@ public partial class FilePreview
     // Data
     //--------------------------------------------------------------------------------
 
-    private string PreviewUrl => $"/api/files/preview/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(Item.RelativePath)}";
-    private string DownloadUrl => $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(Item.RelativePath)}";
+    private string PreviewUrl => ApiRoutes.Preview(Bucket, Item.RelativePath);
+    private string DownloadUrl => ApiRoutes.Download(Bucket, Item.RelativePath);
 
     //--------------------------------------------------------------------------------
     // Lifecycle
@@ -47,7 +46,7 @@ public partial class FilePreview
 
     protected override async Task OnParametersSetAsync()
     {
-        if (IsTextExt(Item.Extension))
+        if (Item.IsText())
         {
             textContent = await Storage.ReadTextAsync(Bucket, Item.RelativePath);
             textContent ??= string.Empty;

@@ -1,5 +1,6 @@
 namespace StorageExplore.Endpoints;
 
+using StorageExplore.Helpers;
 using StorageExplore.Services;
 
 public static class FileEndpoint
@@ -67,7 +68,7 @@ public static class FileEndpoint
             return Results.NotFound();
         }
 
-        return Results.Stream(stream, fileInfo.ContentType, enableRangeProcessing: true);
+        return Results.Stream(stream, fileInfo.GetContentType(), enableRangeProcessing: true);
     }
 
     private static IResult HandleThumbnail(
@@ -81,7 +82,7 @@ public static class FileEndpoint
             return Results.NotFound();
         }
 
-        if (fileInfo.Extension is not (".jpg" or ".jpeg" or ".png" or ".gif" or ".bmp" or ".webp" or ".svg" or ".ico"))
+        if (!fileInfo.HasThumbnail())
         {
             return Results.NoContent();
         }
@@ -94,7 +95,7 @@ public static class FileEndpoint
             return Results.NotFound();
         }
 
-        return Results.Stream(stream, fileInfo.ContentType, enableRangeProcessing: true);
+        return Results.Stream(stream, fileInfo.GetContentType(), enableRangeProcessing: true);
     }
 
     private static async ValueTask<IResult> HandleUpload(

@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
+using StorageExplore.Helpers;
 using StorageExplore.Models;
 using StorageExplore.Services;
-
-using static StorageExplore.Helpers.FileHelper;
 
 public partial class FileBrowser : IAsyncDisposable
 {
@@ -169,7 +168,7 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void SelectItem(FileItem item)
     {
-        if (item.IsPreviewable)
+        if (item.IsPreviewable())
         {
             selectedItem = item;
             previewItem = item;
@@ -182,13 +181,13 @@ public partial class FileBrowser : IAsyncDisposable
 
     private void OpenItem(FileItem item)
     {
-        if (item.IsPreviewable)
+        if (item.IsPreviewable())
         {
             previewItem = item;
         }
         else
         {
-            Navigation.NavigateTo(GetDownloadUrl(item), forceLoad: true);
+            Navigation.NavigateTo(ApiRoutes.Download(Bucket, item.RelativePath), forceLoad: true);
         }
     }
 
@@ -484,18 +483,6 @@ public partial class FileBrowser : IAsyncDisposable
     // Data
     //--------------------------------------------------------------------------------
 
-    private string GetDownloadUrl(FileItem item)
-    {
-        return $"/api/files/download/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(item.RelativePath)}";
-    }
-
-    private string GetThumbnailUrl(FileItem item)
-    {
-        return $"/api/files/thumbnail/{Uri.EscapeDataString(Bucket)}/{EncodePathSegments(item.RelativePath)}?t={item.LastModified.Ticks}";
-    }
-
-    private static bool IsImageFile(FileItem item) => HasThumbnail(item.Extension);
-
     private List<Breadcrumb> GetBreadcrumbs()
     {
         if (string.IsNullOrEmpty(Path))
@@ -556,17 +543,6 @@ public partial class FileBrowser : IAsyncDisposable
         };
 
         return dirs.Concat(files);
-    }
-
-    private MarkupString SortIndicator(SortField field)
-    {
-        if (sortField != field)
-        {
-            return new MarkupString(string.Empty);
-        }
-        return new MarkupString(sortDescending
-            ? "<i class=\"bi bi-chevron-down\" style=\"font-size:0.7rem\"></i>"
-            : "<i class=\"bi bi-chevron-up\" style=\"font-size:0.7rem\"></i>");
     }
 
     //--------------------------------------------------------------------------------

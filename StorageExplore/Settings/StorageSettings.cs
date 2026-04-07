@@ -1,4 +1,4 @@
-namespace StorageExplore.Models;
+namespace StorageExplore.Settings;
 
 #pragma warning disable CA2227
 public sealed class StorageSettings

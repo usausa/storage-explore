@@ -2,9 +2,9 @@
 <div class="fp-panel" @onclick:stopPropagation>
     <div class="fp-header">
         <div class="fp-header-info">
-            <i class="bi @Item.IconCss"></i>
+            <i class="bi @Item.GetIconCss()"></i>
             <span class="fp-filename">@Item.Name</span>
-            <span class="fp-filesize">@Item.FormattedSize</span>
+            <span class="fp-filesize">@Item.FormatSize()</span>
         </div>
         <div class="fp-header-actions">
             <a class="btn-se-icon" href="@DownloadUrl" target="_blank" title="Download">
@@ -16,22 +16,22 @@
         </div>
     </div>
     <div class="fp-body">
-        @if (IsImageExt(Item.Extension))
+        @if (Item.IsImage())
         {
             <div class="fp-center">
                 <img src="@PreviewUrl" alt="@Item.Name" class="fp-image" />
             </div>
         }
-        else if (IsVideoExt(Item.Extension))
+        else if (Item.IsVideo())
         {
             <div class="fp-center">
                 <video controls class="fp-video" autoplay>
-                    <source src="@PreviewUrl" type="@Item.ContentType" />
+                    <source src="@PreviewUrl" type="@Item.GetContentType()" />
                     Your browser does not support the video tag.
                 </video>
             </div>
         }
-        else if (IsAudioExt(Item.Extension))
+        else if (Item.IsAudio())
         {
             <div class="fp-center fp-audio-wrap">
                 <div class="fp-audio-icon">
@@ -39,16 +39,16 @@
                 </div>
                 <div class="fp-audio-name">@Item.Name</div>
                 <audio controls class="fp-audio" autoplay>
-                    <source src="@PreviewUrl" type="@Item.ContentType" />
+                    <source src="@PreviewUrl" type="@Item.GetContentType()" />
                     Your browser does not support the audio tag.
                 </audio>
             </div>
         }
-        else if (IsPdfExt(Item.Extension))
+        else if (Item.IsPdf())
         {
             <iframe src="@PreviewUrl" class="fp-pdf"></iframe>
         }
-        else if (IsTextExt(Item.Extension))
+        else if (Item.IsText())
         {
             <div class="fp-text-wrap">
                 @if (textContent is null)

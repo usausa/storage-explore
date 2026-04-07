@@ -45,7 +45,7 @@
                 </button>
                 @if (!selectedItem.IsDirectory)
                 {
-                    <a class="btn-se-ghost" href="@GetDownloadUrl(selectedItem)" target="_blank">
+                    <a class="btn-se-ghost" href="@ApiRoutes.Download(Bucket, selectedItem.RelativePath)" target="_blank">
                         <i class="bi bi-download"></i> Download
                     </a>
                 }
@@ -148,13 +148,13 @@
                 <div class="fb-list-header">
                     <div class="fb-col-icon"></div>
                     <div class="fb-col-name fb-sortable" @onclick="() => SortBy(SortField.Name)">
-                        Name @SortIndicator(SortField.Name)
+                        Name @ViewHelper.SortIndicator(sortField == SortField.Name, sortDescending)
                     </div>
                     <div class="fb-col-size fb-sortable" @onclick="() => SortBy(SortField.Size)">
-                        Size @SortIndicator(SortField.Size)
+                        Size @ViewHelper.SortIndicator(sortField == SortField.Size, sortDescending)
                     </div>
                     <div class="fb-col-modified fb-sortable" @onclick="() => SortBy(SortField.Modified)">
-                        Modified @SortIndicator(SortField.Modified)
+                        Modified @ViewHelper.SortIndicator(sortField == SortField.Modified, sortDescending)
                     </div>
                     <div class="fb-col-actions"></div>
                 </div>
@@ -220,15 +220,15 @@
                              @ondblclick="() => OpenItem(item)"
                              @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-col-icon">
-                                @if (IsImageFile(item))
+                                @if (item.HasThumbnail())
                                 {
                                     <div class="fb-row-thumb">
-                                        <img src="@GetThumbnailUrl(item)" alt="" loading="lazy" />
+                                        <img src="@ApiRoutes.Thumbnail(Bucket, item.RelativePath, item.LastModified.Ticks)" alt="" loading="lazy" />
                                     </div>
                                 }
                                 else
                                 {
-                                    <i class="bi @item.IconCss"></i>
+                                    <i class="bi @item.GetIconCss()"></i>
                                 }
                             </div>
                             <div class="fb-col-name">
@@ -250,14 +250,14 @@
                                     @item.Name
                                 }
                             </div>
-                            <div class="fb-col-size">@item.FormattedSize</div>
+                            <div class="fb-col-size">@item.FormatSize()</div>
                             <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm")</div>
                             <div class="fb-col-actions">
                                 <button class="btn-se-icon" title="Rename"
                                         @onclick="() => StartRename(item)" @onclick:stopPropagation>
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <a class="btn-se-icon" href="@GetDownloadUrl(item)" target="_blank" title="Download"
+                                <a class="btn-se-icon" href="@ApiRoutes.Download(Bucket, item.RelativePath)" target="_blank" title="Download"
                                    @onclick:stopPropagation>
                                     <i class="bi bi-download"></i>
                                 </a>
@@ -326,13 +326,13 @@
                              @ondblclick="() => OpenItem(item)"
                              @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-card-preview">
-                                @if (IsImageFile(item))
+                                @if (item.HasThumbnail())
                                 {
-                                    <img src="@GetThumbnailUrl(item)" alt="@item.Name" loading="lazy" />
+                                    <img src="@ApiRoutes.Thumbnail(Bucket, item.RelativePath, item.LastModified.Ticks)" alt="@item.Name" loading="lazy" />
                                 }
                                 else
                                 {
-                                    <i class="bi @item.IconCss fb-icon-file-lg"></i>
+                                    <i class="bi @item.GetIconCss() fb-icon-file-lg"></i>
                                 }
                             </div>
                             <div class="fb-card-info">
@@ -352,7 +352,7 @@
                                 else
                                 {
                                     <div class="fb-card-name" title="@item.Name">@item.Name</div>
-                                    <div class="fb-card-meta">@item.FormattedSize</div>
+                                    <div class="fb-card-meta">@item.FormatSize()</div>
                                 }
                             </div>
                         </div>
@@ -378,11 +378,11 @@
     <div class="ctx-menu" style="left: @(contextMenuX)px; top: @(contextMenuY)px;" @onclick:stopPropagation>
         <button class="ctx-item" @onclick="ContextMenuOpen">
             <i class="bi @(contextMenuItem.IsDirectory ? "bi-folder2-open" : "bi-eye")"></i>
-            <span>@(contextMenuItem.IsDirectory ? "Open" : (contextMenuItem.IsPreviewable ? "Preview" : "Open"))</span>
+            <span>@(contextMenuItem.IsDirectory ? "Open" : (contextMenuItem.IsPreviewable() ? "Preview" : "Open"))</span>
         </button>
         @if (!contextMenuItem.IsDirectory)
         {
-            <a class="ctx-item" href="@GetDownloadUrl(contextMenuItem)" target="_blank" @onclick="CloseContextMenu">
+            <a class="ctx-item" href="@ApiRoutes.Download(Bucket, contextMenuItem.RelativePath)" target="_blank" @onclick="CloseContextMenu">
                 <i class="bi bi-download"></i>
                 <span>Download</span>
             </a>
