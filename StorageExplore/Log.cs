@@ -1,7 +1,6 @@
 namespace StorageExplore;
 
 using System.Runtime;
-using System.Runtime.InteropServices;
 
 internal static partial class Log
 {

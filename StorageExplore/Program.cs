@@ -79,7 +79,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 // Initialize storage service
-app.Services.GetRequiredService<FileStorageService>();
+app.Services.GetRequiredService<FileStorageService>().Initialize();
 
 // Startup log
 app.Logger.InfoServiceStart();

@@ -176,7 +176,7 @@
                     {
                         <div class="fb-list-row fb-row-folder @(selectedItem == item ? "selected" : "")"
                              @onclick="() => { if (renamingItem != item) NavigateTo(item.RelativePath); }"
-                             @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
+                             @oncontextmenu="e => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-col-icon">
                                 <i class="bi bi-folder-fill fb-icon-folder"></i>
                             </div>
@@ -218,7 +218,7 @@
                         <div class="fb-list-row @(selectedItem == item ? "selected" : "")"
                              @onclick="() => SelectItem(item)"
                              @ondblclick="() => OpenItem(item)"
-                             @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
+                             @oncontextmenu="e => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-col-icon">
                                 @if (HasThumbnail(item.Extension))
                                 {
@@ -293,7 +293,7 @@
                     {
                         <div class="fb-card fb-card-folder @(selectedItem == item ? "selected" : "")"
                              @onclick="() => { if (renamingItem != item) NavigateTo(item.RelativePath); }"
-                             @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
+                             @oncontextmenu="e => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-card-preview">
                                 <i class="bi bi-folder-fill fb-icon-folder-lg"></i>
                             </div>
@@ -324,7 +324,7 @@
                         <div class="fb-card @(selectedItem == item ? "selected" : "")"
                              @onclick="() => SelectItem(item)"
                              @ondblclick="() => OpenItem(item)"
-                             @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
+                             @oncontextmenu="e => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-card-preview">
                                 @if (HasThumbnail(item.Extension))
                                 {

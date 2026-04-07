@@ -9,16 +9,21 @@ public sealed class FileStorageService
 {
     private readonly ILogger<FileStorageService> log;
 
-    private readonly FileStorageSetting settings;
+    private readonly Dictionary<string, string> resolvedBuckets;
 
-    public IReadOnlyDictionary<string, string> Buckets => settings.Buckets;
+    public IReadOnlyDictionary<string, string> Buckets => resolvedBuckets;
 
     public FileStorageService(ILogger<FileStorageService> log, IOptions<FileStorageSetting> options)
     {
         this.log = log;
-        settings = options.Value;
+        resolvedBuckets = options.Value.Buckets.ToDictionary(
+            kvp => kvp.Key,
+            kvp => Path.GetFullPath(kvp.Value));
+    }
 
-        foreach (var (name, path) in settings.Buckets)
+    public void Initialize()
+    {
+        foreach (var (name, path) in resolvedBuckets)
         {
             if (!Directory.Exists(path))
             {
@@ -30,7 +35,7 @@ public sealed class FileStorageService
 
     public string? GetBucketPath(string bucketName)
     {
-        return settings.Buckets.GetValueOrDefault(bucketName);
+        return resolvedBuckets.GetValueOrDefault(bucketName);
     }
 
     public string? ResolvePath(string bucketName, string relativePath)
