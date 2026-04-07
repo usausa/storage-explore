@@ -1,6 +1,6 @@
 # StorageExplore
 
-A simple browser-based file storage manager for browsing and managing files on a local disk.
+Browser-based file storage manager for browsing and managing files on a local disk.
 
 <img src="Document/image.png" title="Image" width="50%">
 
