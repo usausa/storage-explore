@@ -1,7 +1,5 @@
 namespace StorageExplore.Helpers;
 
-using static StorageExplore.Helpers.FileHelper;
-
 /// <summary>
 /// Builds API endpoint URLs for file operations.
 /// </summary>
@@ -15,4 +13,14 @@ public static class ApiRoutes
 
     public static string Thumbnail(string bucket, string path, long ticks) =>
         $"/api/files/thumbnail/{Uri.EscapeDataString(bucket)}/{EncodePathSegments(path)}?t={ticks}";
+
+    private static string EncodePathSegments(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return string.Empty;
+        }
+
+        return string.Join('/', path.Split('/').Select(Uri.EscapeDataString));
+    }
 }

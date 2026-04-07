@@ -9,7 +9,6 @@ using StorageExplore;
 using StorageExplore.Components;
 using StorageExplore.Endpoints;
 using StorageExplore.Services;
-using StorageExplore.Settings;
 
 //--------------------------------------------------------------------------------
 // Configure builder
@@ -35,7 +34,7 @@ builder.Logging.ClearProviders();
 builder.Services.AddSerilog(options => options.ReadFrom.Configuration(builder.Configuration));
 
 // Configuration
-builder.Services.Configure<StorageSettings>(builder.Configuration.GetSection(StorageSettings.SectionName));
+builder.Services.Configure<FileStorageSetting>(builder.Configuration.GetSection(FileStorageSetting.SectionName));
 builder.Services.AddSingleton<FileStorageService>();
 
 // Blazor
@@ -79,8 +78,7 @@ app.MapRazorComponents<App>()
 // Startup log
 app.Logger.InfoServiceStart();
 app.Logger.InfoServiceSettingsRuntime(RuntimeInformation.OSDescription, RuntimeInformation.FrameworkDescription, RuntimeInformation.RuntimeIdentifier);
-var serviceVersion = typeof(Program).Assembly.GetName().Version;
-app.Logger.InfoServiceSettingsEnvironment(serviceVersion, Environment.CurrentDirectory);
+app.Logger.InfoServiceSettingsEnvironment(typeof(Program).Assembly.GetName().Version, Environment.CurrentDirectory);
 app.Logger.InfoServiceSettingsGC(GCSettings.IsServerGC, GCSettings.LatencyMode, GCSettings.LargeObjectHeapCompactionMode);
 
 app.Run();

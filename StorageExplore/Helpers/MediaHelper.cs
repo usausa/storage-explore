@@ -1,9 +1,9 @@
 namespace StorageExplore.Helpers;
 
 /// <summary>
-/// Shared utility methods for file type detection, formatting, and icon mapping.
+/// Media type detection and content-type utilities.
 /// </summary>
-public static class FileHelper
+public static class MediaHelper
 {
     // ---- Extension sets ----
 
@@ -15,15 +15,6 @@ public static class FileHelper
 
     private static readonly HashSet<string> AudioExtensions =
         [".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma"];
-
-    private static readonly HashSet<string> ArchiveExtensions =
-        [".zip", ".rar", ".7z", ".tar", ".gz"];
-
-    private static readonly HashSet<string> TextExtensions =
-        [".txt", ".log", ".md", ".csv"];
-
-    private static readonly HashSet<string> CodeExtensions =
-        [".cs", ".js", ".ts", ".py", ".java", ".cpp", ".h", ".html", ".css", ".json", ".xml"];
 
     private static readonly HashSet<string> PreviewableExtensions =
         [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg",
@@ -59,59 +50,6 @@ public static class FileHelper
         _ => $"{bytes / (1024.0 * 1024 * 1024 * 1024):F2} TB"
     };
 
-    // ---- Icon CSS class ----
-
-    public static string GetIconCss(string extension, bool isDirectory)
-    {
-        if (isDirectory)
-        {
-            return "bi-folder-fill text-warning";
-        }
-
-        if (ImageExtensions.Contains(extension))
-        {
-            return "bi-file-image text-success";
-        }
-        if (VideoExtensions.Contains(extension))
-        {
-            return "bi-file-play text-danger";
-        }
-        if (AudioExtensions.Contains(extension))
-        {
-            return "bi-file-music text-info";
-        }
-        if (extension == ".pdf")
-        {
-            return "bi-file-pdf text-danger";
-        }
-        if (extension is ".doc" or ".docx")
-        {
-            return "bi-file-word text-primary";
-        }
-        if (extension is ".xls" or ".xlsx")
-        {
-            return "bi-file-excel text-success";
-        }
-        if (extension is ".ppt" or ".pptx")
-        {
-            return "bi-file-ppt text-warning";
-        }
-        if (ArchiveExtensions.Contains(extension))
-        {
-            return "bi-file-zip text-secondary";
-        }
-        if (TextExtensions.Contains(extension))
-        {
-            return "bi-file-text text-muted";
-        }
-        if (CodeExtensions.Contains(extension))
-        {
-            return "bi-file-code text-primary";
-        }
-
-        return "bi-file-earmark text-muted";
-    }
-
     // ---- Content-Type mapping ----
 
     public static string GetContentType(string extension) => extension switch
@@ -138,20 +76,4 @@ public static class FileHelper
         ".js" => "application/javascript",
         _ => "application/octet-stream"
     };
-
-    // ---- URL path encoding ----
-
-    /// <summary>
-    /// Encodes each segment of a relative path for use in a URL path.
-    /// Slashes are preserved; individual segments are percent-encoded.
-    /// </summary>
-    public static string EncodePathSegments(string path)
-    {
-        if (string.IsNullOrEmpty(path))
-        {
-            return string.Empty;
-        }
-
-        return string.Join('/', path.Split('/').Select(Uri.EscapeDataString));
-    }
 }

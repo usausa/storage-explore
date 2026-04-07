@@ -148,13 +148,13 @@
                 <div class="fb-list-header">
                     <div class="fb-col-icon"></div>
                     <div class="fb-col-name fb-sortable" @onclick="() => SortBy(SortField.Name)">
-                        Name @ViewHelper.SortIndicator(sortField == SortField.Name, sortDescending)
+                        Name @SortIndicator(sortField == SortField.Name, sortDescending)
                     </div>
                     <div class="fb-col-size fb-sortable" @onclick="() => SortBy(SortField.Size)">
-                        Size @ViewHelper.SortIndicator(sortField == SortField.Size, sortDescending)
+                        Size @SortIndicator(sortField == SortField.Size, sortDescending)
                     </div>
                     <div class="fb-col-modified fb-sortable" @onclick="() => SortBy(SortField.Modified)">
-                        Modified @ViewHelper.SortIndicator(sortField == SortField.Modified, sortDescending)
+                        Modified @SortIndicator(sortField == SortField.Modified, sortDescending)
                     </div>
                     <div class="fb-col-actions"></div>
                 </div>
@@ -220,7 +220,7 @@
                              @ondblclick="() => OpenItem(item)"
                              @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-col-icon">
-                                @if (item.HasThumbnail())
+                                @if (HasThumbnail(item.Extension))
                                 {
                                     <div class="fb-row-thumb">
                                         <img src="@ApiRoutes.Thumbnail(Bucket, item.RelativePath, item.LastModified.Ticks)" alt="" loading="lazy" />
@@ -228,7 +228,7 @@
                                 }
                                 else
                                 {
-                                    <i class="bi @item.GetIconCss()"></i>
+                                    <i class="bi @GetIconCss(item)"></i>
                                 }
                             </div>
                             <div class="fb-col-name">
@@ -326,13 +326,13 @@
                              @ondblclick="() => OpenItem(item)"
                              @oncontextmenu="(e) => OnContextMenu(e, item)" @oncontextmenu:preventDefault>
                             <div class="fb-card-preview">
-                                @if (item.HasThumbnail())
+                                @if (HasThumbnail(item.Extension))
                                 {
                                     <img src="@ApiRoutes.Thumbnail(Bucket, item.RelativePath, item.LastModified.Ticks)" alt="@item.Name" loading="lazy" />
                                 }
                                 else
                                 {
-                                    <i class="bi @item.GetIconCss() fb-icon-file-lg"></i>
+                                    <i class="bi @GetIconCss(item) fb-icon-file-lg"></i>
                                 }
                             </div>
                             <div class="fb-card-info">

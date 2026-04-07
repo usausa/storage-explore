@@ -68,7 +68,7 @@ public static class FileEndpoint
             return Results.NotFound();
         }
 
-        return Results.Stream(stream, fileInfo.GetContentType(), enableRangeProcessing: true);
+        return Results.Stream(stream, MediaHelper.GetContentType(fileInfo.Extension), enableRangeProcessing: true);
     }
 
     private static IResult HandleThumbnail(
@@ -82,7 +82,7 @@ public static class FileEndpoint
             return Results.NotFound();
         }
 
-        if (!fileInfo.HasThumbnail())
+        if (!MediaHelper.HasThumbnail(fileInfo.Extension))
         {
             return Results.NoContent();
         }
@@ -95,7 +95,7 @@ public static class FileEndpoint
             return Results.NotFound();
         }
 
-        return Results.Stream(stream, fileInfo.GetContentType(), enableRangeProcessing: true);
+        return Results.Stream(stream, MediaHelper.GetContentType(fileInfo.Extension), enableRangeProcessing: true);
     }
 
     private static async ValueTask<IResult> HandleUpload(

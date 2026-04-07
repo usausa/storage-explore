@@ -34,19 +34,12 @@ public partial class FilePreview
     private string? textContent;
 
     //--------------------------------------------------------------------------------
-    // Data
-    //--------------------------------------------------------------------------------
-
-    private string PreviewUrl => ApiRoutes.Preview(Bucket, Item.RelativePath);
-    private string DownloadUrl => ApiRoutes.Download(Bucket, Item.RelativePath);
-
-    //--------------------------------------------------------------------------------
     // Lifecycle
     //--------------------------------------------------------------------------------
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Item.IsText())
+        if (MediaHelper.IsTextExt(Item.Extension))
         {
             textContent = await Storage.ReadTextAsync(Bucket, Item.RelativePath);
             textContent ??= string.Empty;

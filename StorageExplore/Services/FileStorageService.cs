@@ -3,15 +3,14 @@ namespace StorageExplore.Services;
 using Microsoft.Extensions.Options;
 
 using StorageExplore.Models;
-using StorageExplore.Settings;
 
 #pragma warning disable CA3003
 public sealed class FileStorageService
 {
-    private readonly StorageSettings settings;
+    private readonly FileStorageSetting settings;
     private readonly ILogger<FileStorageService> log;
 
-    public FileStorageService(IOptions<StorageSettings> options, ILogger<FileStorageService> log)
+    public FileStorageService(IOptions<FileStorageSetting> options, ILogger<FileStorageService> log)
     {
         settings = options.Value;
         this.log = log;
@@ -25,8 +24,6 @@ public sealed class FileStorageService
             }
         }
     }
-
-    public long MaxUploadSizeBytes => settings.MaxUploadSizeBytes;
 
     public IReadOnlyDictionary<string, string> Buckets => settings.Buckets;
 

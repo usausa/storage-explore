@@ -2,12 +2,12 @@
 <div class="fp-panel" @onclick:stopPropagation>
     <div class="fp-header">
         <div class="fp-header-info">
-            <i class="bi @Item.GetIconCss()"></i>
+            <i class="bi @GetIconCss(Item)"></i>
             <span class="fp-filename">@Item.Name</span>
             <span class="fp-filesize">@Item.FormatSize()</span>
         </div>
         <div class="fp-header-actions">
-            <a class="btn-se-icon" href="@DownloadUrl" target="_blank" title="Download">
+            <a class="btn-se-icon" href="@ApiRoutes.Download(Bucket, Item.RelativePath)" target="_blank" title="Download">
                 <i class="bi bi-download"></i>
             </a>
             <button class="btn-se-icon" @onclick="OnClose" title="Close">
@@ -16,22 +16,22 @@
         </div>
     </div>
     <div class="fp-body">
-        @if (Item.IsImage())
+        @if (IsImageExt(Item.Extension))
         {
             <div class="fp-center">
-                <img src="@PreviewUrl" alt="@Item.Name" class="fp-image" />
+                <img src="@ApiRoutes.Preview(Bucket, Item.RelativePath)" alt="@Item.Name" class="fp-image" />
             </div>
         }
-        else if (Item.IsVideo())
+        else if (IsVideoExt(Item.Extension))
         {
             <div class="fp-center">
                 <video controls class="fp-video" autoplay>
-                    <source src="@PreviewUrl" type="@Item.GetContentType()" />
+                    <source src="@ApiRoutes.Preview(Bucket, Item.RelativePath)" type="@GetContentType(Item.Extension)" />
                     Your browser does not support the video tag.
                 </video>
             </div>
         }
-        else if (Item.IsAudio())
+        else if (IsAudioExt(Item.Extension))
         {
             <div class="fp-center fp-audio-wrap">
                 <div class="fp-audio-icon">
@@ -39,16 +39,16 @@
                 </div>
                 <div class="fp-audio-name">@Item.Name</div>
                 <audio controls class="fp-audio" autoplay>
-                    <source src="@PreviewUrl" type="@Item.GetContentType()" />
+                    <source src="@ApiRoutes.Preview(Bucket, Item.RelativePath)" type="@GetContentType(Item.Extension)" />
                     Your browser does not support the audio tag.
                 </audio>
             </div>
         }
-        else if (Item.IsPdf())
+        else if (IsPdfExt(Item.Extension))
         {
-            <iframe src="@PreviewUrl" class="fp-pdf"></iframe>
+            <iframe src="@ApiRoutes.Preview(Bucket, Item.RelativePath)" class="fp-pdf"></iframe>
         }
-        else if (Item.IsText())
+        else if (IsTextExt(Item.Extension))
         {
             <div class="fp-text-wrap">
                 @if (textContent is null)
