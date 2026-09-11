@@ -201,9 +201,26 @@ public sealed class FileStorageService
             Directory.CreateDirectory(directory);
         }
 
-        await using var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None);
-        await content.CopyToAsync(fs);
-        log.InfoFileSaved(bucketName, relativePath, fs.Length);
+        // 書込途中の失敗で元ファイルを失わないよう、一時ファイルへ完全に書き出してから原子的に置換する
+        var tempPath = $"{fullPath}.{Guid.NewGuid():N}.tmp";
+        long size;
+        try
+        {
+            await using (var fs = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                await content.CopyToAsync(fs);
+                size = fs.Length;
+            }
+
+            File.Move(tempPath, fullPath, overwrite: true);
+        }
+        catch
+        {
+            File.Delete(tempPath);
+            throw;
+        }
+
+        log.InfoFileSaved(bucketName, relativePath, size);
     }
 
     public void CreateDirectory(string bucketName, string relativePath)
