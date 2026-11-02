@@ -3,9 +3,9 @@
 
 <PageTitle>StorageExplore - @(string.IsNullOrEmpty(Path) ? "All files" : System.IO.Path.GetFileName(Path))</PageTitle>
 
-<div class="fb" @ref="dropZoneRef" @onclick="CloseContextMenu">
-    <input type="file" multiple @ref="fileInputRef" style="display:none" />
-
+<FileUpload @ref="upload" class="fb" @onclick="CloseContextMenu" Url="@ApiRoutes.Upload(Bucket, Path ?? string.Empty)"
+            DragOverClass="drop-zone-active" AllowFolders="true" @bind-Uploading="isUploading"
+            OnStarting="OnUploadStarting" OnProgress="OnUploadProgress" OnCompleted="OnUploadCompleted">
     <!-- Action bar -->
     <div class="fb-actions">
         <div class="fb-actions-left">
@@ -33,6 +33,9 @@
         <div class="fb-actions-right">
             <button class="btn-se-primary" @onclick="ShowUploadDialog">
                 <i class="bi bi-cloud-arrow-up"></i> Upload
+            </button>
+            <button class="btn-se-ghost" @onclick="ShowUploadFolderDialog">
+                <i class="bi bi-folder"></i> Upload folder
             </button>
             <button class="btn-se-ghost" @onclick="ShowNewFolderDialog">
                 <i class="bi bi-folder-plus"></i> New folder
@@ -74,6 +77,7 @@
             <div class="fb-upload-toast-content">
                 <div class="spinner-se" role="status"></div>
                 <span>Uploading @uploadedCount / @uploadTotalCount files</span>
+                <button class="btn-se-icon" title="Cancel" @onclick="CancelUpload"><i class="bi bi-x"></i></button>
             </div>
             @if (!string.IsNullOrEmpty(uploadCurrentFile))
             {
@@ -370,7 +374,7 @@
             <span>Drop files to upload</span>
         </div>
     </div>
-</div>
+</FileUpload>
 
 <!-- Context menu -->
 @if (showContextMenu && contextMenuItem is not null)

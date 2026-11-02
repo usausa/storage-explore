@@ -536,6 +536,10 @@ a.fb-crumb:hover {
     margin-bottom: 4px;
 }
 
+.fb-upload-toast-content .btn-se-icon {
+    margin-left: auto;
+}
+
 .fb-upload-current-file {
     font-size: 0.78rem;
     color: var(--se-text-secondary);

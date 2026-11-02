@@ -11,6 +11,9 @@ public static class ApiRoutes
     public static string Thumbnail(string bucket, string path, long ticks) =>
         $"/api/files/thumbnail/{Uri.EscapeDataString(bucket)}/{EncodePathSegments(path)}?t={ticks}";
 
+    public static string Upload(string bucket, string path) =>
+        $"/api/files/upload/{Uri.EscapeDataString(bucket)}/{EncodePathSegments(path)}";
+
     private static string EncodePathSegments(string path)
     {
         if (String.IsNullOrEmpty(path))

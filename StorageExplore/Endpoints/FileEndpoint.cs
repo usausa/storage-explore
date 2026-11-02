@@ -1,5 +1,7 @@
 namespace StorageExplore.Endpoints;
 
+using Microsoft.AspNetCore.Mvc;
+
 using StorageExplore.Helpers;
 using StorageExplore.Services;
 
@@ -17,7 +19,7 @@ public static class FileEndpoint
         group.MapGet("/preview/{bucket}/{**path}", HandlePreview);
         group.MapGet("/thumbnail/{bucket}/{**path}", HandleThumbnail);
         group.MapPost("/upload/{bucket}/{**path}", HandleUpload)
-            .DisableAntiforgery()
+            .WithFormOptions(multipartBodyLengthLimit: long.MaxValue)
             .WithRequestTimeout(TimeSpan.FromHours(1));
     }
 
@@ -99,35 +101,28 @@ public static class FileEndpoint
     }
 
     private static async ValueTask<IResult> HandleUpload(
-        HttpContext context,
         string bucket,
         string? path,
+        [FromForm] string relativePath,
+        IFormFile files,
         FileStorageService storage)
     {
-        var form = await context.Request.ReadFormAsync(context.RequestAborted);
-        if (form.Files.Count == 0)
+        var fileName = GetFileName(relativePath);
+        if (fileName.Length == 0)
         {
-            return Results.BadRequest("No files uploaded.");
+            return Results.BadRequest("Invalid file name.");
         }
 
-        var uploaded = new List<object>();
-        foreach (var file in form.Files)
+        var targetPath = String.IsNullOrEmpty(path) ? relativePath : $"{path}/{relativePath}";
+        if (storage.ResolvePath(bucket, targetPath) is null)
         {
-            var fileName = GetFileName(file.FileName);
-            if (fileName.Length == 0)
-            {
-                return Results.BadRequest("Invalid file name.");
-            }
-
-            var targetPath = String.IsNullOrEmpty(path) ? fileName : $"{path}/{fileName}";
-
-            await using var stream = file.OpenReadStream();
-            await storage.SaveFileAsync(bucket, targetPath, stream);
-
-            uploaded.Add(new { name = fileName, size = file.Length, path = targetPath });
+            return Results.BadRequest("Invalid path.");
         }
 
-        return Results.Ok(new { uploaded = uploaded.Count, files = uploaded });
+        await using var stream = files.OpenReadStream();
+        await storage.SaveFileAsync(bucket, targetPath, stream);
+
+        return Results.Ok(new { name = fileName, size = files.Length, path = targetPath });
     }
 
     private static string GetFileName(string value)

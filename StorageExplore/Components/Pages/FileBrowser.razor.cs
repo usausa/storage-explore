@@ -1,14 +1,16 @@
 namespace StorageExplore.Components.Pages;
 
+using BlazorComponents;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.WebUtilities;
 
 using StorageExplore.Application;
 using StorageExplore.Models;
 using StorageExplore.Services;
 
-public partial class FileBrowser : IAsyncDisposable
+public partial class FileBrowser
 {
     //--------------------------------------------------------------------------------
     // State
@@ -23,6 +25,7 @@ public partial class FileBrowser : IAsyncDisposable
     private bool sortDescending;
 
     // Upload state
+    private FileUpload upload = default!;
     private bool isUploading;
     private int uploadedCount;
     private int uploadTotalCount;
@@ -56,12 +59,6 @@ public partial class FileBrowser : IAsyncDisposable
     private List<string> overwriteFileNames = [];
     private TaskCompletionSource<bool>? overwriteTcs;
 
-    // JS interop
-    private ElementReference dropZoneRef;
-    private ElementReference fileInputRef;
-    private IJSObjectReference? jsModule;
-    private DotNetObjectReference<FileBrowser>? dotNetRef;
-
     private string previousBucket = string.Empty;
     private bool isInitialized;
 
@@ -81,23 +78,9 @@ public partial class FileBrowser : IAsyncDisposable
     [Inject]
     public NavigationManager Navigation { get; set; } = default!;
 
-    [Inject]
-    public IJSRuntime JS { get; set; } = default!;
-
     //--------------------------------------------------------------------------------
     // Lifecycle
     //--------------------------------------------------------------------------------
-
-    public ValueTask DisposeAsync()
-    {
-        GC.SuppressFinalize(this);
-        dotNetRef?.Dispose();
-        if (jsModule is not null)
-        {
-            return jsModule.DisposeAsync();
-        }
-        return ValueTask.CompletedTask;
-    }
 
     protected override Task OnParametersSetAsync()
     {
@@ -117,13 +100,6 @@ public partial class FileBrowser : IAsyncDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            dotNetRef = DotNetObjectReference.Create(this);
-            jsModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/fileUpload.js");
-            await jsModule.InvokeVoidAsync("initDropZone", dropZoneRef, fileInputRef, dotNetRef);
-        }
-
         if (focusNewFolderInput)
         {
             focusNewFolderInput = false;
@@ -399,74 +375,63 @@ public partial class FileBrowser : IAsyncDisposable
     // Upload
     //--------------------------------------------------------------------------------
 
-    private void ShowUploadDialog()
+    private Task ShowUploadDialog() => upload.OpenFilePickerAsync().AsTask();
+
+    private Task ShowUploadFolderDialog() => upload.OpenFolderPickerAsync().AsTask();
+
+    private Task CancelUpload() => upload.CancelAsync().AsTask();
+
+    private async Task OnUploadStarting(FileUploadStartingEventArgs e)
     {
-        _ = JS.InvokeVoidAsync("eval", "document.querySelector('.fb input[type=file]').click()").AsTask();
-    }
+        if (!await CheckDuplicates(e.Entries))
+        {
+            e.Cancel = true;
+            return;
+        }
 
-    [JSInvokable]
-#pragma warning disable CA1024
-    public string GetCurrentPath() => Path ?? string.Empty;
-#pragma warning restore CA1024
-
-    [JSInvokable]
-#pragma warning disable CA1024
-    public string GetCurrentBucket() => Bucket;
-#pragma warning restore CA1024
-
-    [JSInvokable]
-    public void OnUploadStarted(int totalCount, long totalBytes)
-    {
-        isUploading = true;
         uploadedCount = 0;
-        uploadTotalCount = totalCount;
+        uploadTotalCount = e.FileCount;
         uploadedBytes = 0;
-        uploadTotalBytes = totalBytes;
+        uploadTotalBytes = e.TotalBytes;
         uploadCurrentFile = string.Empty;
         uploadError = null;
-        InvokeAsync(StateHasChanged);
     }
 
-    [JSInvokable]
-    public void OnUploadByteProgress(int completedFiles, int totalFiles, long completedBytes, long totalBytes, string currentFile)
+    private void OnUploadProgress(FileUploadProgress e)
     {
-        uploadedCount = completedFiles;
-        uploadTotalCount = totalFiles;
-        uploadedBytes = completedBytes;
-        uploadTotalBytes = totalBytes;
-        uploadCurrentFile = currentFile;
-        InvokeAsync(StateHasChanged);
+        uploadedCount = e.CompletedFiles;
+        uploadTotalCount = e.TotalFiles;
+        uploadedBytes = e.LoadedBytes;
+        uploadTotalBytes = e.TotalBytes;
+        uploadCurrentFile = e.CurrentPath ?? string.Empty;
     }
 
-    [JSInvokable]
-    public async Task OnUploadCompleted()
+    private Task OnUploadCompleted(FileUploadResult e)
     {
-        isUploading = false;
-        uploadCurrentFile = string.Empty;
-        await LoadItems();
-        await InvokeAsync(StateHasChanged);
-    }
+        if (e.Failed > 0)
+        {
+            var error = e.Errors[0];
+            var reason = error.Status == 0 ? "Network error" : ReasonPhrases.GetReasonPhrase(error.Status);
+            uploadError = e.Failed == 1
+                ? $"Upload failed for {error.Path}: {reason}"
+                : $"Upload failed for {e.Failed} files ({error.Path}: {reason})";
+        }
 
-    [JSInvokable]
-    public void OnUploadError(string error)
-    {
-        uploadError = error;
-        InvokeAsync(StateHasChanged);
+        return LoadItems();
     }
 
     //--------------------------------------------------------------------------------
     // Overwrite confirmation
     //--------------------------------------------------------------------------------
 
-    [JSInvokable]
-    public async Task<bool> CheckDuplicates(string[] fileNames)
+    private async Task<bool> CheckDuplicates(IEnumerable<FileUploadEntry> entries)
     {
         var existingNames = items
             .Where(i => !i.IsDirectory)
             .Select(i => i.Name)
             .ToHashSet(StringComparer.Ordinal);
 
-        var duplicates = fileNames.Where(existingNames.Contains).ToList();
+        var duplicates = entries.Where(x => !x.IsFolder && existingNames.Contains(x.Name)).Select(x => x.Name).ToList();
         if (duplicates.Count == 0)
         {
             return true;
