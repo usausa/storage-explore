@@ -1,5 +1,6 @@
 @page "/"
 @page "/browse/{**Path}"
+@using System.Globalization
 
 <PageTitle>StorageExplore - @(string.IsNullOrEmpty(Path) ? "All files" : System.IO.Path.GetFileName(Path))</PageTitle>
 
@@ -205,7 +206,7 @@
                                 }
                             </div>
                             <div class="fb-col-size"></div>
-                            <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm")</div>
+                            <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm", CultureInfo.InvariantCulture)</div>
                             <div class="fb-col-actions">
                                 <button class="btn-se-icon" title="Rename"
                                         @onclick="() => StartRename(item)" @onclick:stopPropagation>
@@ -256,7 +257,7 @@
                                 }
                             </div>
                             <div class="fb-col-size">@FormatSize(item)</div>
-                            <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm")</div>
+                            <div class="fb-col-modified">@item.LastModified.ToString("MMM d, yyyy HH:mm", CultureInfo.InvariantCulture)</div>
                             <div class="fb-col-actions">
                                 <button class="btn-se-icon" title="Rename"
                                         @onclick="() => StartRename(item)" @onclick:stopPropagation>

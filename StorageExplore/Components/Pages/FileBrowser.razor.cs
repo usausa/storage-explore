@@ -507,17 +507,17 @@ public partial class FileBrowser
 
         dirs = sortField switch
         {
-            SortField.Name => sortDescending ? dirs.OrderByDescending(i => i.Name) : dirs.OrderBy(i => i.Name),
+            SortField.Name => sortDescending ? dirs.OrderByDescending(i => i.Name, StringComparer.Ordinal) : dirs.OrderBy(i => i.Name, StringComparer.Ordinal),
             SortField.Modified => sortDescending ? dirs.OrderByDescending(i => i.LastModified) : dirs.OrderBy(i => i.LastModified),
-            _ => dirs.OrderBy(i => i.Name)
+            _ => dirs.OrderBy(i => i.Name, StringComparer.Ordinal)
         };
 
         files = sortField switch
         {
-            SortField.Name => sortDescending ? files.OrderByDescending(i => i.Name) : files.OrderBy(i => i.Name),
+            SortField.Name => sortDescending ? files.OrderByDescending(i => i.Name, StringComparer.Ordinal) : files.OrderBy(i => i.Name, StringComparer.Ordinal),
             SortField.Size => sortDescending ? files.OrderByDescending(i => i.Size) : files.OrderBy(i => i.Size),
             SortField.Modified => sortDescending ? files.OrderByDescending(i => i.LastModified) : files.OrderBy(i => i.LastModified),
-            _ => files.OrderBy(i => i.Name)
+            _ => files.OrderBy(i => i.Name, StringComparer.Ordinal)
         };
 
         return dirs.Concat(files);
