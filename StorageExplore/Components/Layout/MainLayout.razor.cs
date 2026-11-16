@@ -70,7 +70,6 @@ public partial class MainLayout
         {
             CurrentBucket = newBucket;
             UpdateStorageInfo();
-            StateHasChanged();
         }
     }
 

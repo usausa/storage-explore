@@ -145,7 +145,7 @@ public partial class FileBrowser
             return;
         }
 
-        var lastSlash = Path.LastIndexOf('/');
+        var lastSlash = Path.LastIndexOf('/', StringComparison.Ordinal);
         var parentPath = lastSlash > 0 ? Path[..lastSlash] : string.Empty;
         NavigateTo(parentPath);
     }

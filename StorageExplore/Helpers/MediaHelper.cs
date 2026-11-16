@@ -19,11 +19,13 @@ public static class MediaHelper
         [".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma"];
 
     private static readonly HashSet<string> PreviewableExtensions =
-        [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg",
-         ".mp4", ".webm",
-         ".mp3", ".wav", ".ogg",
-         ".txt", ".log", ".md", ".csv", ".json", ".xml",
-         ".pdf"];
+    [
+        ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg",
+        ".mp4", ".webm",
+        ".mp3", ".wav", ".ogg",
+        ".txt", ".log", ".md", ".csv", ".json", ".xml",
+        ".pdf"
+    ];
 
     private static readonly HashSet<string> ThumbnailExtensions =
         [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico"];
